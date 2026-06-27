@@ -34,14 +34,16 @@ export const Header = () => {
             </ul>
           </nav>
 
-          <button
-            type="button"
-            onClick={() => setExitModalOpen(true)}
-            className="btn--ghost shrink-0 gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Вихід
-          </button>
+          {/*
+            <button
+                type="button"
+                onClick={() => setExitModalOpen(true)}
+                className="btn--ghost shrink-0 gap-2"
+            >
+                <LogOut className="h-4 w-4" />
+                Вихід
+            </button>
+            */}
         </div>
       </header>
 

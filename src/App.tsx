@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { Header } from '~/components/layout/Header'
 import HomePage from '~/pages/HomePage/HomePage'
-import SubjectsPage from '~/pages/SubjectsPage'
+import StudyProgramsPage from '~/pages/StudyProgramsPage/StudyProgramsPage'
 import TeachersPage from '~/pages/TeachersPage'
 
 export const App = () => {
@@ -11,7 +11,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/teachers" element={<TeachersPage />} />
-        <Route path="/subjects" element={<SubjectsPage />} />
+        <Route path="/study-programs" element={<StudyProgramsPage />} />
       </Routes>
     </>
   )

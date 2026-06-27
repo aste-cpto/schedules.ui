@@ -45,11 +45,7 @@ export function getScheduleRowActions(
       icon: Pencil,
       onClick: () => handlers.onEdit(schedule.id),
     },
-    {
-      label: 'Типи навчань та викладачі',
-      icon: Clock,
-      onClick: () => handlers.onTrainingTypes(schedule.id),
-    },
+    /*
     {
       label: schedule.isBlocked ? 'Розблокувати' : 'Заблокувати',
       icon: Lock,
@@ -65,6 +61,7 @@ export function getScheduleRowActions(
       icon: Download,
       onClick: () => handlers.onExport(schedule.id),
     },
+    */
     {
       label: 'Видалити',
       icon: Trash2,
