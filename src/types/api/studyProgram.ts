@@ -9,14 +9,16 @@ export type StudyProgramSubjectDto = {
   name: string
   hours: number
   order: number
-  studyProgramId: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export type StudyProgramDetailsDto = {
   id: number
   name: string
-  hours: number
   subjects: StudyProgramSubjectDto[]
+  createdAt: string
+  updatedAt: string
 }
 
 export type NewStudyProgramSubjectDto = {
@@ -30,11 +32,17 @@ export type CreateStudyProgramDto = {
   subjects: NewStudyProgramSubjectDto[]
 }
 
-export type UpdateStudyProgramDto = {
+export type UpdateStudyProgramSubjectDto = {
   id: number
   name: string
   hours: number
-  subjects: StudyProgramSubjectDto[]
+  order: number
+}
+
+export type UpdateStudyProgramDto = {
+  id: number
+  name: string
+  subjects: UpdateStudyProgramSubjectDto[]
 }
 
 export type StudyProgramsListParams = {

@@ -1,4 +1,6 @@
-export type TeacherShortDto = {
+export type LessonType = 'Pair' | 'Practice'
+
+export type LessonTeacherDto = {
   id: number
   displayName: string
 }
@@ -6,20 +8,34 @@ export type TeacherShortDto = {
 export type LessonDto = {
   id: number
   date: string
-  schedule_id: number
-  subject_id: number
-  teacher: TeacherShortDto
-  type: string
-  order: number
   hours: number
+  order: number
+  type: LessonType
+  teacherId: number
+  subjectId: number
+  scheduleId: number
+  teacher: LessonTeacherDto
+  createdAt: string
+  updatedAt: string
 }
 
 export type CreateLessonDto = {
+  date: string
   hours: number
   order: number
-  type: string
-  id: number
-  teacher_id: number
-  subject_id: number
+  type: LessonType
+  teacherId: number
+  subjectId: number
+  scheduleId: number
+}
+
+export type UpdateLessonDto = {
+  id?: number
   date: string
+  hours: number
+  order: number
+  type: LessonType
+  teacherId: number
+  subjectId: number
+  scheduleId: number
 }

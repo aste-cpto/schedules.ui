@@ -1,11 +1,9 @@
-import { LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import logo from '~/assets/logo.svg'
 import { ConfirmModal } from '~/components/ui/ConfirmModal'
 import { quickLinks } from '~/constants/links'
 import { cn } from '~/lib/cn'
-import { Button } from '../ui/Button'
 
 export const Header = () => {
   const [exitModalOpen, setExitModalOpen] = useState(false)

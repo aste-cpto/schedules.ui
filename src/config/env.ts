@@ -1,1 +1,1 @@
-export { API_BASE_URL, USE_MOCK_DATA } from '~/env'
+export { API_BASE_URL } from '~/env'

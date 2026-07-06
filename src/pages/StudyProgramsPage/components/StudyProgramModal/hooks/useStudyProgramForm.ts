@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { useSensor, useSensors, PointerSensor, KeyboardSensor } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core'
+import { useToast } from '~/components/ui/toast/useToast'
+import { getErrorMessage } from '~/lib/formatApiError'
+import { VALIDATION_REQUIRED_FIELDS } from '~/lib/validationMessages'
 import { studyProgramsService } from '~/services/studyProgramsService'
 import type { SubjectField } from '../components/SortableSubjectRow'
 
@@ -12,7 +15,6 @@ type UseStudyProgramFormOptions = {
   mode: StudyProgramFormMode
   programId?: number
   onSuccess: () => void
-  onClose: () => void
 }
 
 const createEmptySubject = (): SubjectField => ({
@@ -26,13 +28,13 @@ export const useStudyProgramForm = ({
   mode,
   programId,
   onSuccess,
-  onClose,
 }: UseStudyProgramFormOptions) => {
+  const toast = useToast()
   const [programName, setProgramName] = useState('')
   const [subjects, setSubjects] = useState<SubjectField[]>([createEmptySubject()])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingDetails, setIsLoadingDetails] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -44,12 +46,18 @@ export const useStudyProgramForm = ({
     subjects.every((subject) => subject.name.trim() !== '' && subject.hours > 0)
 
   useEffect(() => {
+    if (isFormValid && validationError) {
+      setValidationError(null)
+    }
+  }, [isFormValid, validationError])
+
+  useEffect(() => {
     if (!open) return
 
     if (mode === 'create') {
       setProgramName('')
       setSubjects([createEmptySubject()])
-      setError(null)
+      setValidationError(null)
       return
     }
 
@@ -57,7 +65,7 @@ export const useStudyProgramForm = ({
 
     const loadProgram = async () => {
       setIsLoadingDetails(true)
-      setError(null)
+      setValidationError(null)
 
       try {
         const data = await studyProgramsService.getById(programId)
@@ -73,15 +81,15 @@ export const useStudyProgramForm = ({
               hours: subject.hours,
             })),
         )
-      } catch {
-        setError('Не вдалося завантажити дані програми')
+      } catch (err) {
+        toast.error(getErrorMessage(err, 'Не вдалося завантажити дані програми'))
       } finally {
         setIsLoadingDetails(false)
       }
     }
 
     void loadProgram()
-  }, [open, mode, programId])
+  }, [open, mode, programId, toast])
 
   const addSubject = () => {
     setSubjects((prev) => [...prev, createEmptySubject()])
@@ -115,10 +123,13 @@ export const useStudyProgramForm = ({
   }
 
   const submit = async () => {
-    if (!isFormValid) return
+    if (!isFormValid) {
+      setValidationError(VALIDATION_REQUIRED_FIELDS)
+      return
+    }
 
     setIsLoading(true)
-    setError(null)
+    setValidationError(null)
 
     const orderedSubjects = subjects.map((subject, index) => ({
       name: subject.name.trim(),
@@ -126,33 +137,35 @@ export const useStudyProgramForm = ({
       order: index + 1,
     }))
 
-    const totalHours = orderedSubjects.reduce((sum, subject) => sum + subject.hours, 0)
-
     try {
       if (mode === 'create') {
         await studyProgramsService.create({
           name: programName.trim(),
           subjects: orderedSubjects,
         })
+        toast.success('Програму створено')
       } else if (programId) {
         await studyProgramsService.update(programId, {
           id: programId,
           name: programName.trim(),
-          hours: totalHours,
           subjects: subjects.map((subject, index) => ({
             id: subject.subjectId ?? 0,
             name: subject.name.trim(),
             hours: subject.hours,
             order: index + 1,
-            studyProgramId: programId,
           })),
         })
+        toast.success('Програму оновлено')
       }
 
       onSuccess()
-      onClose()
-    } catch {
-      setError(mode === 'create' ? 'Не вдалося створити програму.' : 'Не вдалося оновити програму.')
+    } catch (err) {
+      toast.error(
+        getErrorMessage(
+          err,
+          mode === 'create' ? 'Не вдалося створити програму' : 'Не вдалося оновити програму',
+        ),
+      )
     } finally {
       setIsLoading(false)
     }
@@ -164,7 +177,7 @@ export const useStudyProgramForm = ({
       subjects,
       isLoading,
       isLoadingDetails,
-      error,
+      validationError,
       isFormValid,
       sensors,
       mode,

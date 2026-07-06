@@ -78,8 +78,8 @@ export const Select = ({
                       setOpen(false)
                     }}
                     className={cn(
-                      'flex w-full px-3 py-2 text-left text-sm transition-colors hover:bg-bg-muted',
-                      isSelected ? 'font-semibold text-text' : 'text-text-secondary',
+                      'flex w-full px-3 py-2 text-left text-sm text-text transition-colors hover:bg-bg-muted',
+                      isSelected && 'font-semibold',
                     )}
                   >
                     {option.label}

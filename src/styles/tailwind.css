@@ -89,67 +89,180 @@
   .datepicker-popper {
     @apply z-50!;
     margin-top: 0.625rem !important;
+    padding-top: 0 !important;
+  }
+
+  .datepicker-popper .react-datepicker__triangle {
+    @apply hidden;
   }
 
   .datepicker-theme.react-datepicker {
-    @apply overflow-hidden rounded-xl border border-border bg-bg-surface font-sans shadow-md;
+    @apply inline-block min-w-[18.5rem] overflow-hidden rounded-xl border border-border bg-bg-surface font-sans text-text shadow-lg;
+    font-family: inherit;
+    line-height: initial;
+    position: relative;
+  }
+
+  .datepicker-theme .react-datepicker__month-container {
+    @apply float-none w-full;
   }
 
   .datepicker-theme .react-datepicker__header {
-    @apply border-b border-border bg-bg-muted px-2 pb-2 pt-3;
+    @apply relative border-b border-border bg-bg-muted/80 px-3 pb-2 pt-3 text-center;
+  }
+
+  .datepicker-theme .react-datepicker__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .datepicker-theme .react-datepicker__current-month {
-    @apply mb-1 text-sm font-semibold text-text capitalize;
+    @apply mb-2 text-sm font-semibold capitalize text-text;
+    margin-top: 0;
+    padding: 0;
   }
 
   .datepicker-theme .react-datepicker__day-names {
-    @apply flex justify-around px-1;
+    @apply mb-1 grid grid-cols-7 justify-items-center gap-0.5 px-1;
   }
 
   .datepicker-theme .react-datepicker__day-name {
-    @apply m-0 inline-flex h-7 w-9 items-center justify-center text-[0.65rem] font-semibold uppercase tracking-wide text-text-secondary;
+    @apply m-0 flex h-7 w-9 items-center justify-center text-[0.7rem] font-semibold text-text-secondary;
+    text-transform: none;
   }
 
   .datepicker-theme .react-datepicker__month {
-    @apply m-0 p-2.5;
+    @apply m-0 p-2;
+    text-align: center;
   }
 
   .datepicker-theme .react-datepicker__week {
-    @apply flex justify-around;
+    @apply grid grid-cols-7 justify-items-center gap-0.5;
   }
 
   .datepicker-theme .react-datepicker__day {
-    @apply m-0.5 inline-flex h-9 w-9 items-center justify-center rounded-lg text-sm text-text transition-colors hover:bg-bg-muted;
+    @apply m-0 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent text-sm font-medium text-text transition-colors;
+    line-height: 1;
+  }
+
+  .datepicker-theme
+    .react-datepicker__day:hover:not(.react-datepicker__day--disabled):not(
+      .react-datepicker__day--selected
+    ) {
+    @apply border-accent-indigo/20 bg-accent-indigo/10 text-accent-indigo;
   }
 
   .datepicker-theme .react-datepicker__day--today {
-    @apply font-semibold ring-1 ring-border-strong ring-inset;
+    @apply font-semibold text-accent-indigo ring-1 ring-accent-indigo/30 ring-inset;
+  }
+
+  .datepicker-theme .react-datepicker__day--today.react-datepicker__day--selected {
+    @apply text-text-inverse ring-0;
   }
 
   .datepicker-theme .react-datepicker__day--selected,
   .datepicker-theme .react-datepicker__day--keyboard-selected {
-    @apply bg-text font-semibold text-text-inverse hover:bg-text;
+    @apply border-transparent bg-gradient-to-r from-accent-violet via-accent-indigo to-accent-blue font-semibold text-text-inverse shadow-sm;
+  }
+
+  .datepicker-theme .react-datepicker__day--selected:hover,
+  .datepicker-theme .react-datepicker__day--keyboard-selected:hover {
+    @apply from-accent-violet via-accent-indigo to-accent-blue text-text-inverse opacity-95;
   }
 
   .datepicker-theme .react-datepicker__day--outside-month {
-    @apply text-text-muted opacity-50;
+    @apply text-text-muted opacity-40;
   }
 
   .datepicker-theme .react-datepicker__day--disabled {
-    @apply cursor-not-allowed text-text-muted opacity-30 hover:bg-transparent;
+    @apply cursor-not-allowed text-text-muted opacity-30 hover:border-transparent hover:bg-transparent hover:text-text-muted;
   }
 
   .datepicker-theme .react-datepicker__navigation {
-    @apply top-3;
+    @apply top-3.5 z-[1] flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent p-0 transition-colors hover:bg-bg-surface;
+    position: absolute;
+    overflow: hidden;
+    text-indent: -999em;
+  }
+
+  .datepicker-theme .react-datepicker__navigation-icon {
+    position: relative;
+    top: -1px;
+    width: 0;
+    font-size: 20px;
   }
 
   .datepicker-theme .react-datepicker__navigation-icon::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 6px;
+    height: 9px;
+    width: 9px;
     @apply border-text-secondary;
+    border-style: solid;
+    border-width: 2px 2px 0 0;
+  }
+
+  .datepicker-theme .react-datepicker__navigation-icon--previous {
+    right: -2px;
+  }
+
+  .datepicker-theme .react-datepicker__navigation-icon--previous::before {
+    transform: rotate(225deg);
+    right: -7px;
+  }
+
+  .datepicker-theme .react-datepicker__navigation-icon--next {
+    left: -2px;
+  }
+
+  .datepicker-theme .react-datepicker__navigation-icon--next::before {
+    transform: rotate(45deg);
+    left: -7px;
   }
 
   .datepicker-theme .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
-    @apply border-text;
+    @apply border-accent-indigo;
+  }
+
+  .datepicker-theme .react-datepicker__navigation--previous {
+    @apply left-2.5;
+  }
+
+  .datepicker-theme .react-datepicker__navigation--next {
+    @apply right-2.5;
+  }
+
+  .datepicker-field {
+    @apply relative w-full;
+  }
+
+  .datepicker-field__trigger {
+    @apply flex min-h-[42px] w-full items-center justify-between gap-2 rounded-md border border-border bg-bg-surface px-3 py-2.5 text-left text-sm text-text transition-colors;
+  }
+
+  .datepicker-field__trigger--open {
+    @apply border-border-strong ring-2 ring-text/5;
+  }
+
+  .datepicker-field__value {
+    @apply min-w-0 flex-1 truncate;
+  }
+
+  .datepicker-field__value--placeholder {
+    @apply text-text-muted;
+  }
+
+  .datepicker-field__icon {
+    @apply h-4 w-4 shrink-0 text-text-muted;
   }
 
   /* Status badges */
@@ -169,5 +282,31 @@
     background: var(--color-status-inactive-bg);
     padding-bottom: 4px;
     color: var(--color-status-inactive-text);
+  }
+
+  /* Toasts */
+  .toast {
+    @apply pointer-events-auto flex w-full items-start gap-2 rounded-lg border-2 px-4 py-3 text-sm font-semibold;
+    box-shadow:
+      0 10px 25px rgba(17, 24, 39, 0.18),
+      0 4px 10px rgba(17, 24, 39, 0.1);
+  }
+
+  .toast--success {
+    border-color: var(--color-toast-success-border);
+    background: var(--color-toast-success-bg);
+    color: var(--color-toast-success-text);
+    box-shadow:
+      0 10px 25px rgba(21, 128, 61, 0.4),
+      0 4px 10px rgba(17, 24, 39, 0.12);
+  }
+
+  .toast--error {
+    border-color: var(--color-toast-error-border);
+    background: var(--color-toast-error-bg);
+    color: var(--color-toast-error-text);
+    box-shadow:
+      0 10px 25px rgba(190, 18, 60, 0.4),
+      0 4px 10px rgba(17, 24, 39, 0.12);
   }
 }
