@@ -1,4 +1,4 @@
-// Text 
+// Text
 $color-text: #111827;
 $color-text-secondary: #6b7280;
 $color-text-muted: #9ca3af;
@@ -16,13 +16,25 @@ $color-border-strong: #d1d5db;
 
 // Status
 $color-status-active: #27e860;
-$color-status-active-text: #15803d;
+$color-status-active-text: #019939;
 $color-status-active-bg: rgb(39 232 96 / 32%);
 $color-status-active-border: rgb(39 232 96 / 55%);
 
 $color-status-inactive-text: #6b7280;
 $color-status-inactive-bg: rgba(156, 163, 175, 0.18);
 $color-status-inactive-border: rgba(107, 114, 128, 0.4);
+
+$color-status-error-text: #be123c;
+$color-status-error-bg: rgb(244 63 94 / 22%);
+$color-status-error-border: rgb(244 63 94 / 55%);
+
+$color-toast-success-bg: #00cf4c;
+$color-toast-success-border: #007b2f;
+$color-toast-success-text: #ffffff;
+
+$color-toast-error-bg: #d60036;
+$color-toast-error-border: #9f1239;
+$color-toast-error-text: #ffffff;
 
 // Accent (purple → blue)
 $color-accent-violet: #7c3aed;
@@ -36,12 +48,7 @@ $gradient-accent: linear-gradient(
   $color-accent-blue 100%
 );
 
-$gradient-accent-hover: linear-gradient(
-  135deg,
-  #6d28d9 0%,
-  #4338ca 50%,
-  #1d4ed8 100%
-);
+$gradient-accent-hover: linear-gradient(135deg, #6d28d9 0%, #4338ca 50%, #1d4ed8 100%);
 
 // Typography
 $font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -78,6 +85,18 @@ $shadow-lg: 0 8px 24px rgba(17, 24, 39, 0.1);
   --color-status-inactive-text: #{$color-status-inactive-text};
   --color-status-inactive-bg: #{$color-status-inactive-bg};
   --color-status-inactive-border: #{$color-status-inactive-border};
+
+  --color-status-error-text: #{$color-status-error-text};
+  --color-status-error-bg: #{$color-status-error-bg};
+  --color-status-error-border: #{$color-status-error-border};
+
+  --color-toast-success-bg: #{$color-toast-success-bg};
+  --color-toast-success-border: #{$color-toast-success-border};
+  --color-toast-success-text: #{$color-toast-success-text};
+
+  --color-toast-error-bg: #{$color-toast-error-bg};
+  --color-toast-error-border: #{$color-toast-error-border};
+  --color-toast-error-text: #{$color-toast-error-text};
 
   --color-accent-violet: #{$color-accent-violet};
   --color-accent-indigo: #{$color-accent-indigo};

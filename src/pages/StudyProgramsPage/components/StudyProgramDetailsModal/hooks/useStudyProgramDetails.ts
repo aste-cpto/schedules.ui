@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-import { USE_MOCK_DATA } from '~/env'
-import { getMockStudyProgramById } from '~/services/mockStudyProgramsService'
 import { studyProgramsService } from '~/services/studyProgramsService'
 import type { StudyProgramDetailsDto } from '~/types/api/studyProgram'
 
@@ -20,15 +18,7 @@ export const useStudyProgramDetails = (open: boolean, programId: number | null) 
       setLoading(true)
       setError(null)
       try {
-        const data = USE_MOCK_DATA
-          ? getMockStudyProgramById(programId)
-          : await studyProgramsService.getById(programId)
-
-        if (!data) {
-          setError('Програму не знайдено')
-          return
-        }
-
+        const data = await studyProgramsService.getById(programId)
         const sortedSubjects = [...data.subjects].sort((a, b) => a.order - b.order)
         setDetails({ ...data, subjects: sortedSubjects })
       } catch {

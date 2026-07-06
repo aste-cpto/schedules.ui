@@ -1,5 +1,6 @@
 import { apiClient } from '~/lib/apiClient'
-import type { CreateLessonDto, LessonDto } from '~/types/api/lesson'
+import { buildApiListQuery } from '~/lib/buildApiQuery'
+import type { LessonDto } from '~/types/api/lesson'
 import type {
   CreateScheduleDto,
   ScheduleDto,
@@ -8,36 +9,48 @@ import type {
   UpdateScheduleDto,
 } from '~/types/api/schedule'
 
-function buildSchedulesQuery(params?: SchedulesListParams): string {
-  if (!params) return ''
+function filterSchedulesByDate(
+  items: ScheduleDto[],
+  startDate?: string,
+  endDate?: string,
+): ScheduleDto[] {
+  if (!startDate && !endDate) return items
 
-  const searchParams = new URLSearchParams()
+  return items.filter((item) => {
+    const itemStart = item.startDate.slice(0, 10)
+    const itemEnd = item.endDate.slice(0, 10)
 
-  if (params.startDate) searchParams.set('startDate', params.startDate)
-  if (params.endDate) searchParams.set('endDate', params.endDate)
-  if (params.search) searchParams.set('search', params.search)
-  if (params.page !== undefined) searchParams.set('page', String(params.page))
-  if (params.pageRecords !== undefined) searchParams.set('pageRecords', String(params.pageRecords))
+    if (startDate && itemEnd < startDate) return false
+    if (endDate && itemStart > endDate) return false
 
-  const query = searchParams.toString()
-  return query ? `?${query}` : ''
+    return true
+  })
 }
 
 export const schedulesService = {
-  getList(params?: SchedulesListParams) {
-    return apiClient<SchedulesListResponse>(`/schedules${buildSchedulesQuery(params)}`)
+  async getList(params?: SchedulesListParams) {
+    const data = await apiClient<SchedulesListResponse>(
+      `/schedules${buildApiListQuery(params)}`,
+    )
+
+    const filteredItems = filterSchedulesByDate(data.items, params?.startDate, params?.endDate)
+
+    return {
+      ...data,
+      items: filteredItems,
+    }
   },
 
   create(payload: CreateScheduleDto) {
-    return apiClient<ScheduleDto>('/schedules', {
+    return apiClient<void>('/schedules', {
       method: 'POST',
       body: payload,
     })
   },
 
   update(id: number, payload: UpdateScheduleDto) {
-    return apiClient<ScheduleDto>(`/schedules/${id}`, {
-      method: 'PATCH',
+    return apiClient<void>(`/schedules/${id}`, {
+      method: 'PUT',
       body: payload,
     })
   },
@@ -48,14 +61,12 @@ export const schedulesService = {
     })
   },
 
-  getLessons(scheduleId: number) {
-    return apiClient<LessonDto[]>(`/schedules/${scheduleId}/lessons`)
+  getById(id: number) {
+    return apiClient<ScheduleDto>(`/schedules/${id}`)
   },
 
-  addLesson(scheduleId: number, payload: CreateLessonDto) {
-    return apiClient<void>(`/schedules/${scheduleId}/lessons`, {
-      method: 'POST',
-      body: payload,
-    })
+  /** Not documented in OpenAPI v1 — used by schedule details modal */
+  getLessons(scheduleId: number) {
+    return apiClient<LessonDto[]>(`/schedules/${scheduleId}/lessons`)
   },
 }

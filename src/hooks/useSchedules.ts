@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { USE_MOCK_DATA } from '~/env'
+import { useToast } from '~/components/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
+import { estimateTotalFromApiResponse } from '~/lib/paginationUtils'
 import { mapScheduleDtoToSchedule } from '~/mappers/scheduleMapper'
-import {
-  createMockSchedulesSource,
-  getMockSchedulesList,
-} from '~/services/mockSchedulesService'
 import { schedulesService } from '~/services/schedulesService'
 import type { SchedulesListParams } from '~/types/api/schedule'
 import type { Schedule } from '~/types/schedule'
@@ -17,93 +14,62 @@ type SchedulesPagination = {
   total: number
 }
 
+type RefetchOptions = {
+  silent?: boolean
+}
+
 type UseSchedulesResult = {
   schedules: Schedule[]
   loading: boolean
   error: string | null
   pagination: SchedulesPagination | null
-  refetch: () => Promise<void>
+  refetch: (options?: RefetchOptions) => Promise<void>
   deleteSchedule: (id: number) => Promise<void>
 }
 
-function estimateTotalFromApiResponse(
-  page: number,
-  pageRecords: number,
-  pagesCount: number,
-  itemsOnPage: number,
-): number {
-  if (pagesCount === 0) return 0
-  if (page >= pagesCount) return (pagesCount - 1) * pageRecords + itemsOnPage
-  return pagesCount * pageRecords
-}
-
 export function useSchedules(params?: SchedulesListParams): UseSchedulesResult {
-  const [mockSource, setMockSource] = useState<Schedule[]>(createMockSchedulesSource)
-  const initialMock = USE_MOCK_DATA ? getMockSchedulesList(mockSource, params) : null
-
-  const [schedules, setSchedules] = useState<Schedule[]>(initialMock?.schedules ?? [])
-  const [loading, setLoading] = useState(!USE_MOCK_DATA)
+  const toast = useToast()
+  const [schedules, setSchedules] = useState<Schedule[]>([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [pagination, setPagination] = useState<SchedulesPagination | null>(
-    initialMock
-      ? {
-          page: initialMock.page,
-          pageRecords: initialMock.pageRecords,
-          pagesCount: initialMock.pagesCount,
-          total: initialMock.total,
-        }
-      : null,
-  )
+  const [pagination, setPagination] = useState<SchedulesPagination | null>(null)
 
-  const refetch = useCallback(async () => {
-    if (USE_MOCK_DATA) {
+  const refetch = useCallback(async (options?: RefetchOptions) => {
+    const silent = options?.silent ?? false
+
+    if (!silent) {
+      setLoading(true)
       setError(null)
-
-      const data = getMockSchedulesList(mockSource, params)
-
-      setSchedules(data.schedules)
-      setPagination({
-        page: data.page,
-        pageRecords: data.pageRecords,
-        pagesCount: data.pagesCount,
-        total: data.total,
-      })
-      setLoading(false)
-      return
     }
-
-    setLoading(true)
-    setError(null)
 
     try {
       const data = await schedulesService.getList(params)
-      setSchedules(data.schedules.map(mapScheduleDtoToSchedule))
+      setSchedules(data.items.map(mapScheduleDtoToSchedule))
       setPagination({
         page: data.page,
         pageRecords: data.pageRecords,
-        pagesCount: data.pagesCount,
+        pagesCount: data.totalPages,
         total: estimateTotalFromApiResponse(
           data.page,
           data.pageRecords,
-          data.pagesCount,
-          data.schedules.length,
+          data.totalPages,
+          data.items.length,
         ),
       })
     } catch (err) {
-      setError(getErrorMessage(err, 'Не вдалося завантажити розклади'))
-      setSchedules([])
-      setPagination(null)
+      const message = getErrorMessage(err, 'Не вдалося завантажити розклади')
+      if (!silent) {
+        setError(message)
+        setSchedules([])
+        setPagination(null)
+      }
+      toast.error(message)
     } finally {
-      setLoading(false)
+      if (!silent) {
+        setLoading(false)
+      }
     }
-  }, [
-    mockSource,
-    params?.endDate,
-    params?.page,
-    params?.pageRecords,
-    params?.search,
-    params?.startDate,
-  ])
+  }, [params?.endDate, params?.page, params?.pageRecords, params?.search, params?.startDate, toast])
 
   useEffect(() => {
     void refetch()
@@ -111,19 +77,15 @@ export function useSchedules(params?: SchedulesListParams): UseSchedulesResult {
 
   const deleteSchedule = useCallback(
     async (id: number) => {
-      if (USE_MOCK_DATA) {
-        setMockSource((prev) => prev.filter((schedule) => schedule.id !== id))
-        return
-      }
-
       try {
         await schedulesService.delete(id)
+        toast.success('Розклад видалено')
         await refetch()
       } catch (err) {
-        setError(getErrorMessage(err, 'Не вдалося видалити розклад'))
+        toast.error(getErrorMessage(err, 'Не вдалося видалити розклад'))
       }
     },
-    [refetch],
+    [refetch, toast],
   )
 
   return {

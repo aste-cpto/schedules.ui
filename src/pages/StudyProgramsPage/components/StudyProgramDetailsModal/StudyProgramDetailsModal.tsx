@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ModalLayout } from '~/components/ui/ModalLayout'
-import { FormErrorMessage } from '~/components/ui/FormErrorMessage'
-import { USE_MOCK_DATA } from '~/env'
-import { getMockStudyProgramById } from '~/services/mockStudyProgramsService'
+import { useToast } from '~/components/ui/toast/useToast'
+import { getErrorMessage } from '~/lib/formatApiError'
 import { studyProgramsService } from '~/services/studyProgramsService'
 import type { StudyProgramDetailsDto } from '~/types/api/studyProgram'
 import { StudyProgramSubjectsTable } from './components/StudyProgramSubjectsTable'
@@ -19,38 +18,28 @@ export const StudyProgramDetailsModal = ({
   programId,
   onClose,
 }: StudyProgramDetailsModalProps) => {
+  const toast = useToast()
   const [details, setDetails] = useState<StudyProgramDetailsDto | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!open || !programId) {
       setDetails(null)
-      setError(null)
       return
     }
 
     const loadDetails = async () => {
       setLoading(true)
-      setError(null)
 
       try {
-        const data = USE_MOCK_DATA
-          ? getMockStudyProgramById(programId)
-          : await studyProgramsService.getById(programId)
-
-        if (!data) {
-          setError('Програму не знайдено')
-          setDetails(null)
-          return
-        }
+        const data = await studyProgramsService.getById(programId)
 
         setDetails({
           ...data,
           subjects: [...data.subjects].sort((a, b) => a.order - b.order),
         })
-      } catch {
-        setError('Не вдалося завантажити деталі програми')
+      } catch (err) {
+        toast.error(getErrorMessage(err, 'Не вдалося завантажити деталі програми'))
         setDetails(null)
       } finally {
         setLoading(false)
@@ -58,7 +47,7 @@ export const StudyProgramDetailsModal = ({
     }
 
     void loadDetails()
-  }, [open, programId])
+  }, [open, programId, toast])
 
   return (
     <ModalLayout
@@ -76,9 +65,7 @@ export const StudyProgramDetailsModal = ({
           <p className="py-8 text-center text-text-secondary">Завантаження деталей програми...</p>
         )}
 
-        {!loading && error && <FormErrorMessage message={error} />}
-
-        {!loading && !error && details && <StudyProgramSubjectsTable subjects={details.subjects} />}
+        {!loading && details && <StudyProgramSubjectsTable subjects={details.subjects} />}
 
         <footer className="flex justify-end sticky bottom-0 bg-bg-surface">
           <Button type="button" onClick={onClose} variant="primary" className="px-8">

@@ -1,45 +1,61 @@
 import { uk } from 'date-fns/locale'
 import { Calendar } from 'lucide-react'
-import { forwardRef } from 'react'
+import { forwardRef, useState } from 'react'
 import DatePickerLib from 'react-datepicker'
 import { FieldClearButton } from '~/components/ui/FieldClearButton'
 import { cn } from '~/lib/cn'
-import { formatDateToIso, parseIsoDate } from '~/lib/dateUtils'
-import 'react-datepicker/dist/react-datepicker.css'
+import { formatDateToDisplay, formatDateToIso, parseIsoDate } from '~/lib/dateUtils'
+
+const UK_WEEKDAY_SHORT: Record<string, string> = {
+  неділя: 'Нд',
+  понеділок: 'Пн',
+  вівторок: 'Вт',
+  середа: 'Ср',
+  четвер: 'Чт',
+  "п'ятниця": 'Пт',
+  "пʼятниця": 'Пт',
+  пятниця: 'Пт',
+  субота: 'Сб',
+}
+
+function formatWeekDay(day: string): string {
+  return UK_WEEKDAY_SHORT[day.toLowerCase()] ?? day.slice(0, 2)
+}
 
 type DatePickerInputProps = {
   value?: string
   onClick?: () => void
   placeholder?: string
   onClear?: () => void
+  isOpen?: boolean
 }
 
 const DatePickerInput = forwardRef<HTMLButtonElement, DatePickerInputProps>(
-  ({ value, onClick, placeholder, onClear }, ref) => {
+  ({ value, onClick, placeholder, onClear, isOpen }, ref) => {
     const hasValue = Boolean(value)
 
     return (
-      <div className="field-input flex w-full items-center !p-0">
+      <div className="datepicker-field">
         <button
           type="button"
           ref={ref}
           onClick={onClick}
-          className="flex min-h-[42px] flex-1 items-center px-3 text-left text-sm"
+          className={cn('datepicker-field__trigger', isOpen && 'datepicker-field__trigger--open')}
         >
-          <span className={cn(hasValue ? 'text-text' : 'text-text-muted')}>
+          <span
+            className={cn(
+              'datepicker-field__value',
+              !hasValue && 'datepicker-field__value--placeholder',
+            )}
+          >
             {value || placeholder}
           </span>
-          {!hasValue && <Calendar className="h-4 w-4 shrink-0 text-text-muted absolute right-4" />}
-        </button>
 
-        {hasValue && (
-          <FieldClearButton
-            onClick={() => {
-              onClear?.()
-            }}
-            className="mr-3"
-          />
-        )}
+          <span className="flex shrink-0 items-center gap-1">
+            {hasValue && <FieldClearButton onClick={() => onClear?.()} />}
+            <Calendar className="datepicker-field__icon" aria-hidden />
+          </span>
+        </button>
       </div>
     )
   },
@@ -68,8 +84,10 @@ export const DatePicker = ({
   maxDate,
   id,
 }: DatePickerProps) => {
+  const [isOpen, setIsOpen] = useState(false)
   const fieldId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
   const selected = parseIsoDate(value)
+  const displayValue = selected ? formatDateToDisplay(selected) : ''
 
   return (
     <div className={cn('field-group', wrapperClassName)}>
@@ -83,8 +101,12 @@ export const DatePicker = ({
         id={fieldId}
         wrapperClassName="w-full"
         selected={selected}
+        open={isOpen}
+        onCalendarOpen={() => setIsOpen(true)}
+        onCalendarClose={() => setIsOpen(false)}
         onChange={(date: Date | null) => onChange(date ? formatDateToIso(date) : '')}
         locale={uk}
+        formatWeekDay={formatWeekDay}
         dateFormat="dd.MM.yyyy"
         placeholderText={placeholder}
         minDate={minDate}
@@ -93,7 +115,14 @@ export const DatePicker = ({
         popperPlacement="bottom-start"
         calendarClassName="datepicker-theme"
         popperClassName="datepicker-popper"
-        customInput={<DatePickerInput placeholder={placeholder} onClear={() => onChange('')} />}
+        customInput={
+          <DatePickerInput
+            value={displayValue}
+            placeholder={placeholder}
+            isOpen={isOpen}
+            onClear={() => onChange('')}
+          />
+        }
       />
     </div>
   )

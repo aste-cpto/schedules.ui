@@ -28,7 +28,6 @@ export const StudyProgramModal = ({
     mode,
     programId,
     onSuccess,
-    onClose,
   })
 
   const isEdit = mode === 'edit'
@@ -103,7 +102,7 @@ export const StudyProgramModal = ({
           </>
         )}
 
-        {state.error && <FormErrorMessage message={state.error} />}
+        {state.validationError && <FormErrorMessage message={state.validationError} />}
 
         <footer className="flex justify-end gap-3 pt-2">
           <Button type="button" onClick={onClose} variant="ghost" disabled={isBusy}>
@@ -113,7 +112,7 @@ export const StudyProgramModal = ({
             type="submit"
             variant="primary"
             className="px-8"
-            disabled={isBusy || !state.isFormValid || state.isLoadingDetails}
+            disabled={isBusy || state.isLoadingDetails}
           >
             {state.isLoading ? 'Збереження...' : isEdit ? 'Зберегти' : 'Створити'}
           </Button>

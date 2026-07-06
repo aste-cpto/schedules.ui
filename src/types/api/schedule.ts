@@ -1,42 +1,43 @@
-export type StudyProgramDto = {
-  id: number
-  name: string
-}
-
 export type ScheduleDto = {
   id: number
   startDate: string
   endDate: string
   groupName: string
   status: string
-  studyProgram: StudyProgramDto
-  spName?: string
+  studyProgramId: number
+  studyProgramName: string
 }
 
 export type SchedulesListParams = {
-  startDate?: string
-  endDate?: string
   search?: string
   page?: number
   pageRecords?: number
+  /** Client-side filter only — not sent to API */
+  startDate?: string
+  /** Client-side filter only — not sent to API */
+  endDate?: string
 }
 
 export type SchedulesListResponse = {
-  schedules: ScheduleDto[]
+  items: ScheduleDto[]
   page: number
   pageRecords: number
-  pagesCount: number
+  totalPages: number
 }
 
 export type CreateScheduleDto = {
-  groupName: string
   startDate: string
   endDate: string
-  spId: number
+  groupName: string
+  status: string
+  studyProgramId: number
 }
 
 export type UpdateScheduleDto = {
-  startDate?: string
-  groupName?: string
-  endDate?: string
+  id: number
+  startDate: string
+  endDate: string
+  groupName: string
+  status: string
+  studyProgramId: number
 }

@@ -25,6 +25,18 @@ export function formatDateToDisplay(date: Date): string {
   return `${day}.${month}.${year}`
 }
 
+export function formatApiDateToDisplay(value: string): string {
+  const date = parseIsoDate(value)
+  if (!date) return value
+
+  return formatDateToDisplay(date)
+}
+
+export function toApiDateTime(dateInput: string, time = '00:00:00'): string {
+  const isoDate = toIsoDateString(dateInput)
+  return `${isoDate}T${time}`
+}
+
 export function toIsoDateString(value: string): string {
   const fromDisplay = parseDisplayDate(value)
   if (fromDisplay) return formatDateToIso(fromDisplay)

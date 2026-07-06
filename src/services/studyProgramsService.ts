@@ -1,4 +1,5 @@
 import { apiClient } from '~/lib/apiClient'
+import { buildApiListQuery } from '~/lib/buildApiQuery'
 import type {
   CreateStudyProgramDto,
   StudyProgramDetailsDto,
@@ -7,22 +8,11 @@ import type {
   UpdateStudyProgramDto,
 } from '~/types/api/studyProgram'
 
-function buildStudyProgramsQuery(params?: StudyProgramsListParams): string {
-  if (!params) return ''
-
-  const searchParams = new URLSearchParams()
-
-  if (params.search) searchParams.set('search', params.search)
-  if (params.page !== undefined) searchParams.set('page', String(params.page))
-  if (params.pageRecords !== undefined) searchParams.set('pageRecords', String(params.pageRecords))
-
-  const query = searchParams.toString()
-  return query ? `?${query}` : ''
-}
-
 export const studyProgramsService = {
   getList(params?: StudyProgramsListParams) {
-    return apiClient<StudyProgramsListResponse>(`/study-programs${buildStudyProgramsQuery(params)}`)
+    return apiClient<StudyProgramsListResponse>(
+      `/study-programs${buildApiListQuery(params)}`,
+    )
   },
 
   getById(id: number) {
@@ -39,7 +29,7 @@ export const studyProgramsService = {
   update(id: number, payload: UpdateStudyProgramDto) {
     return apiClient<void>(`/study-programs/${id}`, {
       method: 'PUT',
-      body: payload,
+      body: { ...payload, id },
     })
   },
 
