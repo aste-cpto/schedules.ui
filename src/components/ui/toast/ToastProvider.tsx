@@ -1,4 +1,4 @@
-import { createContext, useCallback, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useMemo, useState, useRef, type ReactNode } from 'react'
 import { ToastViewport } from './ToastViewport'
 import { TOAST_DURATION_MS, type ToastContextValue, type ToastItem } from './types'
 
@@ -15,11 +15,24 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id))
   }, [])
 
+  // Used to synchronously track active messages for deduplication.
+  // This prevents race conditions when multiple identical errors are triggered
+  // simultaneously, and avoids adding state dependencies to useCallback.
+  const activeMessages = useRef<Set<string>>(new Set())
+
   const showToast = useCallback(
     (type: ToastItem['type'], message: string) => {
+      if (!message || activeMessages.current.has(message)) return
+
       const id = crypto.randomUUID()
+      activeMessages.current.add(message)
+
       setToasts((prev) => [...prev, { id, type, message }])
-      window.setTimeout(() => dismiss(id), TOAST_DURATION_MS)
+      
+      window.setTimeout(() => {
+        activeMessages.current.delete(message)
+        dismiss(id)
+      }, TOAST_DURATION_MS)
     },
     [dismiss],
   )

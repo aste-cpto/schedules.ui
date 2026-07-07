@@ -119,6 +119,7 @@ export function formatApiErrorMessage(status: number, rawMessage: string): strin
 export function getErrorMessage(err: unknown, fallback: string): string {
   if (err instanceof Error && err.name === 'ApiError' && 'status' in err) {
     const apiErr = err as Error & { status: number }
+    if (apiErr.status === 401) return ''
     return formatApiErrorMessage(apiErr.status, apiErr.message)
   }
 
