@@ -1,60 +1,52 @@
-import React, { useState } from 'react';
-import { useAuth } from '~/contexts/AuthContext';
-import { authService } from '~/services/authService';
-import { X, Lock, User, Loader2 } from 'lucide-react';
+import React, { useState } from 'react'
+import { useAuth } from '~/contexts/AuthContext'
+import { authService } from '~/services/authService'
+
+import { Lock, User, Loader2 } from 'lucide-react'
 
 export const LoginOverlay: React.FC = () => {
-  const { isLoginModalOpen, closeLoginModal } = useAuth();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoginModalOpen, closeLoginModal } = useAuth()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  if (!isLoginModalOpen) return null;
+  if (!isLoginModalOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
 
     try {
-      const response = await authService.login({ username, password });
-      localStorage.setItem('token', response.token);
-      closeLoginModal();
-      
+      await authService.login({ username, password })
+      closeLoginModal()
+
       // Reload page to retry failed requests with the new token
-      window.location.reload();
+      window.location.reload()
     } catch (err: any) {
-      setError(err.message || 'Помилка входу. Перевірте свої дані.');
+      setError(err.message || 'Помилка входу. Перевірте свої дані.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-text/30 backdrop-blur-sm transition-all duration-300">
       <div className="bg-bg-surface rounded-lg shadow-lg w-full max-w-md overflow-hidden transform transition-all duration-300 border border-border">
         <div className="p-8">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h2 className="text-2xl font-bold text-text">З поверненням</h2>
-              <p className="text-sm text-text-secondary mt-1">Будь ласка, увійдіть, щоб продовжити</p>
-            </div>
-            <button
-              onClick={closeLoginModal}
-              className="p-2 text-text-muted hover:text-text hover:bg-bg-muted rounded-full transition-colors"
-            >
-              <X size={20} />
-            </button>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-text">З поверненням</h2>
+            <p className="text-sm text-text-secondary mt-1">Будь ласка, увійдіть, щоб продовжити</p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="p-4 rounded-md bg-red-50 border border-red-100 text-red-600 text-sm flex items-center">
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium text-text block">Логін</label>
               <div className="relative">
@@ -71,7 +63,7 @@ export const LoginOverlay: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium text-text block">Пароль</label>
               <div className="relative">
@@ -100,5 +92,5 @@ export const LoginOverlay: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

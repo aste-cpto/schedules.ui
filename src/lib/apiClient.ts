@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '~/config/env'
+import { tokenService } from '~/services/tokenService'
 
 export class ApiError extends Error {
   status: number
@@ -30,7 +31,7 @@ async function parseResponseBody<T>(response: Response): Promise<T> {
 export async function apiClient<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, headers, ...rest } = options
 
-  const token = localStorage.getItem('token')
+  const token = tokenService.getToken()
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,

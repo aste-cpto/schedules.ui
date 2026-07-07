@@ -1,5 +1,5 @@
 import { ModalLayout } from '~/components/ui/ModalLayout'
-import { Button } from './Button'
+import { Button, type ButtonVariant } from './Button'
 
 type ConfirmModalProps = {
   open: boolean
@@ -8,6 +8,8 @@ type ConfirmModalProps = {
   confirmText?: string
   cancelText?: string
   variant?: 'default' | 'danger'
+  confirmVariant?: ButtonVariant
+  cancelVariant?: ButtonVariant
   onConfirm: () => void
   onClose: () => void
 }
@@ -22,6 +24,8 @@ export const ConfirmModal = ({
   confirmText = 'Підтвердити',
   cancelText = 'Скасувати',
   variant = 'default',
+  confirmVariant,
+  cancelVariant,
   onConfirm,
   onClose,
 }: ConfirmModalProps) => {
@@ -43,12 +47,12 @@ export const ConfirmModal = ({
       </div>
 
       <div className="mx-auto mt-8 grid w-full max-w-[14rem] grid-cols-2 gap-3">
-        <Button variant="secondary" onClick={onClose} className="w-full">
+        <Button variant={cancelVariant || 'secondary'} onClick={onClose} className="w-full">
           {cancelText}
         </Button>
 
         <Button
-          variant={variant === 'danger' ? 'danger' : 'primary'}
+          variant={confirmVariant || (variant === 'danger' ? 'danger' : 'primary')}
           onClick={onConfirm}
           className="w-full"
         >
