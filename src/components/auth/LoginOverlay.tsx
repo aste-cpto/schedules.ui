@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useAuth } from '~/contexts/AuthContext'
 import { authService } from '~/services/authService'
+import { useToast } from '~/components/ui/toast/useToast'
 
 import { Lock, User, Loader2 } from 'lucide-react'
 
 export const LoginOverlay: React.FC = () => {
   const { isLoginModalOpen, closeLoginModal } = useAuth()
+  const toast = useToast()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -21,9 +23,7 @@ export const LoginOverlay: React.FC = () => {
     try {
       await authService.login({ username, password })
       closeLoginModal()
-
-      // Reload page to retry failed requests with the new token
-      window.location.reload()
+      toast.success('Успішний вхід')
     } catch (err: any) {
       setError(err.message || 'Помилка входу. Перевірте свої дані.')
     } finally {
@@ -32,7 +32,7 @@ export const LoginOverlay: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-text/30 backdrop-blur-sm transition-all duration-300">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-text/30 backdrop-blur-sm transition-all duration-300">
       <div className="bg-bg-surface rounded-lg shadow-lg w-full max-w-md overflow-hidden transform transition-all duration-300 border border-border">
         <div className="p-8">
           <div className="mb-8">
