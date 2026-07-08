@@ -265,6 +265,23 @@
     @apply h-4 w-4 shrink-0 text-text-muted;
   }
 
+  /* Dropdown Menus */
+  .dropdown-menu-item {
+    @apply flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors text-text;
+  }
+
+  .dropdown-menu-item:not(:disabled) {
+    @apply hover:bg-bg-muted;
+  }
+
+  .dropdown-menu-item:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .dropdown-menu-item--danger {
+    @apply text-rose-600;
+  }
+
   /* Status badges */
   .status-badge {
     @apply inline-flex w-[5rem] justify-center rounded-full px-2 py-0.5 text-xs font-semibold;

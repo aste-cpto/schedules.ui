@@ -93,10 +93,11 @@ export const StudyProgramRowActionsMenu = ({
                 <button
                   key={item.label}
                   type="button"
-                  onClick={() => handleItemClick(item.tone, item.onClick)}
+                  disabled={item.disabled}
+                  onClick={() => !item.disabled && handleItemClick(item.tone, item.onClick)}
                   className={cn(
-                    'flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-bg-muted',
-                    item.tone === 'danger' ? 'text-rose-600' : 'text-text',
+                    'dropdown-menu-item',
+                    item.tone === 'danger' && 'dropdown-menu-item--danger',
                   )}
                 >
                   <Icon className={item.iconClassName ?? MENU_ICON_CLASS} />

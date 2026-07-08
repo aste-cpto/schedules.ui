@@ -1,4 +1,4 @@
-export type StudyProgramTableColumnKey = 'index' | 'name' | 'actions'
+export type StudyProgramTableColumnKey = 'index' | 'name' | 'hours' | 'actions'
 
 export type StudyProgramTableColumn = {
   key: StudyProgramTableColumnKey
@@ -19,6 +19,12 @@ export const STUDY_PROGRAM_TABLE_COLUMNS: StudyProgramTableColumn[] = [
     label: 'Назва навчальної програми',
     headerClassName: 'min-w-[320px] px-4 py-3 font-semibold',
     cellClassName: 'px-4 py-3 leading-snug',
+  },
+  {
+    key: 'hours',
+    label: 'Кількість годин',
+    headerClassName: 'w-36 whitespace-nowrap px-4 py-3 font-semibold',
+    cellClassName: 'whitespace-nowrap px-4 py-3 tabular-nums',
   },
   {
     key: 'actions',

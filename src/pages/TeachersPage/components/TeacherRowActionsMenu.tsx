@@ -93,10 +93,8 @@ export const TeacherRowActionsMenu = ({ teacher, actions }: TeacherRowActionsMen
                   disabled={item.disabled}
                   onClick={() => !item.disabled && handleItemClick(item.tone, item.onClick)}
                   className={cn(
-                    'flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors',
-                    !item.disabled && 'hover:bg-bg-muted',
-                    item.disabled && 'opacity-50 cursor-not-allowed',
-                    item.tone === 'danger' ? 'text-rose-600' : 'text-text',
+                    'dropdown-menu-item',
+                    item.tone === 'danger' && 'dropdown-menu-item--danger',
                   )}
                 >
                   <Icon className={item.iconClassName ?? MENU_ICON_CLASS} />

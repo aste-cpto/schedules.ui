@@ -24,6 +24,8 @@ function renderCell(
       return index + 1
     case 'name':
       return program.name
+    case 'hours':
+      return program.hours
     case 'actions':
       return <StudyProgramRowActionsMenu program={program} actions={rowActions} />
   }

@@ -78,7 +78,10 @@ function StudyProgramsPage() {
         mode={formModal?.mode ?? 'create'}
         programId={formModal?.mode === 'edit' ? formModal.programId : undefined}
         onClose={closeFormModal}
-        onSuccess={() => void refetch()}
+        onSuccess={() => {
+          closeFormModal()
+          void refetch()
+        }}
       />
 
       <StudyProgramDetailsModal
