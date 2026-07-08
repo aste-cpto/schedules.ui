@@ -3,24 +3,14 @@ import { Link, NavLink } from 'react-router-dom'
 import logo from '~/assets/logo.svg'
 import { ConfirmModal } from '~/components/ui/ConfirmModal'
 import { quickLinks } from '~/constants/links'
-import { authService } from '~/services/authService'
 import { LogOut } from 'lucide-react'
 import { Button } from '~/components/ui/Button'
 import { cn } from '~/lib/cn'
+import { useLogout } from './hooks/useLogout'
 
 export const Header = () => {
   const [exitModalOpen, setExitModalOpen] = useState(false)
-
-  const handleLogout = async () => {
-    try {
-      await authService.logout()
-    } catch (error) {
-      console.error('Logout failed:', error)
-    } finally {
-      setExitModalOpen(false)
-      window.location.reload()
-    }
-  }
+  const { logout } = useLogout()
 
   return (
     <>
@@ -58,9 +48,8 @@ export const Header = () => {
         title="Вихід"
         description="Ви точно бажаєте вийти?"
         confirmText="Вийти"
-        confirmVariant="secondary"
-        cancelVariant="primary"
-        onConfirm={handleLogout}
+        variant="danger"
+        onConfirm={() => void logout(() => setExitModalOpen(false))}
         onClose={() => setExitModalOpen(false)}
       />
     </>

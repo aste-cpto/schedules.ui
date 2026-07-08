@@ -3,7 +3,7 @@ import { Header } from '~/components/layout/Header'
 import SchedulesPage from '~/pages/SchedulesPage/SchedulesPage'
 import StudyProgramsPage from '~/pages/StudyProgramsPage/StudyProgramsPage'
 import TeachersPage from '~/pages/TeachersPage/TeachersPage'
-import { LoginOverlay } from '~/components/auth/LoginOverlay'
+import { LoginOverlay } from '~/components/auth/LoginOverlay/LoginOverlay'
 
 export const App = () => {
   return (
