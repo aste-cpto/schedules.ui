@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useToast } from '~/components/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
-import { formatDateToIso } from '~/lib/dateUtils'
 import { VALIDATION_REQUIRED_FIELDS } from '~/lib/validationMessages'
 import {
   normalizeTeacherStatus,
@@ -38,22 +37,26 @@ export const useTeacherForm = ({
   const [patronymic, setPatronymic] = useState('')
   const [hours, setHours] = useState('')
   const [status, setStatus] = useState<TeacherStatus>(TEACHER_STATUS.ACTIVE)
-  const [loadYear, setLoadYear] = useState<string | null>(null)
-  const [currentTeachingLoad, setCurrentTeachingLoad] = useState<TeachingLoadDto | null>(null)
+  
+  const [teachingLoads, setTeachingLoads] = useState<TeachingLoadDto[]>([])
+  const [selectedYear, setSelectedYear] = useState<string>('')
+  
   const [initialStatusValue, setInitialStatusValue] = useState<TeacherStatus>(initialStatus)
-  const [initialHours, setInitialHours] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingDetails, setIsLoadingDetails] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
 
   const parsedHours = Number(hours)
+  const isValidYear = /^\d{4}$/.test(selectedYear.trim())
+  
   const isFormValid =
     lastName.trim() !== '' &&
     firstName.trim() !== '' &&
     patronymic.trim() !== '' &&
     hours.trim() !== '' &&
     Number.isFinite(parsedHours) &&
-    parsedHours >= 0
+    parsedHours >= 0 &&
+    (mode === 'create' || isValidYear)
 
   useEffect(() => {
     if (isFormValid && validationError) {
@@ -70,10 +73,9 @@ export const useTeacherForm = ({
       setPatronymic('')
       setHours('')
       setStatus(TEACHER_STATUS.ACTIVE)
-      setLoadYear(null)
-      setCurrentTeachingLoad(null)
+      setSelectedYear('')
+      setTeachingLoads([])
       setInitialStatusValue(TEACHER_STATUS.ACTIVE)
-      setInitialHours(null)
       setValidationError(null)
       return
     }
@@ -86,18 +88,21 @@ export const useTeacherForm = ({
 
       try {
         const data = await teachersService.getById(teacherId)
-        const latestLoad = getLatestTeachingLoad(data.teachingLoads ?? [])
+        const loads = data.teachingLoads ?? []
+        const latestLoad = getLatestTeachingLoad(loads)
         const normalizedStatus = normalizeTeacherStatus(data.status ?? initialStatus)
 
         setLastName(data.lastName)
         setFirstName(data.firstName)
         setPatronymic(data.patronymic)
+        setTeachingLoads(loads)
+        
+        const year = getTeachingLoadYear(latestLoad) ?? String(new Date().getFullYear())
+        setSelectedYear(year)
         setHours(String(latestLoad?.hours ?? ''))
-        setLoadYear(getTeachingLoadYear(latestLoad))
-        setCurrentTeachingLoad(latestLoad)
+        
         setStatus(normalizedStatus)
         setInitialStatusValue(normalizedStatus)
-        setInitialHours(latestLoad?.hours ?? null)
       } catch (err) {
         toast.error(getErrorMessage(err, 'Не вдалося завантажити дані викладача'))
       } finally {
@@ -107,6 +112,16 @@ export const useTeacherForm = ({
 
     void loadTeacher()
   }, [open, mode, teacherId, initialStatus, toast])
+
+  const handleYearChange = (year: string) => {
+    setSelectedYear(year)
+    const existingLoad = teachingLoads.find(load => getTeachingLoadYear(load) === year)
+    if (existingLoad) {
+      setHours(String(existingLoad.hours))
+    } else {
+      setHours('')
+    }
+  }
 
   const submit = async () => {
     if (!isFormValid) {
@@ -137,22 +152,26 @@ export const useTeacherForm = ({
           await teachersService.updateStatus({ id: teacherId, status })
         }
 
-        if (initialHours !== parsedHours) {
-          if (currentTeachingLoad) {
+        const existingLoad = teachingLoads.find(load => getTeachingLoadYear(load) === selectedYear)
+        
+        if (existingLoad) {
+          if (existingLoad.hours !== parsedHours) {
             await teachersService.updateTeachingLoad({
-              id: currentTeachingLoad.id,
+              id: existingLoad.id,
               teacherId,
               hours: parsedHours,
-              startDate: currentTeachingLoad.startDate,
-              endDate: currentTeachingLoad.endDate ?? null,
-            })
-          } else {
-            await teachersService.createTeachingLoad({
-              teacherId,
-              hours: parsedHours,
-              startDate: formatDateToIso(new Date()),
+              startDate: existingLoad.startDate,
+              endDate: existingLoad.endDate ?? null,
             })
           }
+        } else {
+          // New year added
+          const startDate = `${selectedYear}-01-01T00:00:00Z`
+          await teachersService.createTeachingLoad({
+            teacherId,
+            hours: parsedHours,
+            startDate,
+          })
         }
 
         toast.success('Викладача оновлено')
@@ -171,6 +190,20 @@ export const useTeacherForm = ({
     }
   }
 
+  const yearOptions = useMemo(() => {
+    const years = teachingLoads
+      .map(load => getTeachingLoadYear(load))
+      .filter((year): year is string => year !== null)
+    
+    // Sort descending
+    years.sort((a, b) => b.localeCompare(a))
+    
+    return Array.from(new Set(years)).map(year => ({
+      value: year,
+      label: year
+    }))
+  }, [teachingLoads])
+
   return {
     state: {
       lastName,
@@ -178,14 +211,15 @@ export const useTeacherForm = ({
       patronymic,
       hours,
       status,
-      loadYear,
+      selectedYear,
+      yearOptions,
       statusOptions: TEACHER_STATUS_OPTIONS,
       isLoading,
       isLoadingDetails,
       isFormValid,
       validationError,
       showStatus: mode === 'edit',
-      showLoadYear: mode === 'edit' && loadYear !== null,
+      showLoadYear: mode === 'edit',
     },
     actions: {
       setLastName,
@@ -193,6 +227,7 @@ export const useTeacherForm = ({
       setPatronymic,
       setHours,
       setStatus,
+      handleYearChange,
       submit,
     },
   }

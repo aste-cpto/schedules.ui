@@ -76,7 +76,10 @@ function TeachersPage() {
         teacherId={formModal?.mode === 'edit' ? formModal.teacherId : undefined}
         initialStatus={formModal?.mode === 'edit' ? formModal.status : undefined}
         onClose={closeFormModal}
-        onSuccess={() => void refetch()}
+        onSuccess={() => {
+          closeFormModal()
+          void refetch()
+        }}
       />
     </main>
   )
