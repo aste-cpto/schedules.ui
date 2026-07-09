@@ -1,4 +1,5 @@
 import { TableHeader } from '~/ui/TableHeader'
+import { DataTable } from '~/ui/DataTable'
 import { cn } from '~/lib/cn'
 import { RowActionsMenu } from '~/pages/SchedulesPage/components/RowActionsMenu'
 import { ScheduleDetailsModal } from '~/pages/SchedulesPage/components/ScheduleDetailsModal/ScheduleDetailsModal'
@@ -24,8 +25,8 @@ export const SchedulesTable = ({
     rowActions,
   )
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-bg-surface shadow-sm">
-      <div className="overflow-x-auto">
+    <>
+      <DataTable>
         <table className="min-w-full border-collapse text-sm">
           <TableHeader
             columns={SCHEDULE_TABLE_COLUMNS.map((column) => ({
@@ -76,7 +77,7 @@ export const SchedulesTable = ({
             )}
           </tbody>
         </table>
-      </div>
+      </DataTable>
 
       <ScheduleDetailsModal
         open={isModalOpen}
@@ -84,6 +85,6 @@ export const SchedulesTable = ({
         onClose={() => setIsModalOpen(false)}
         onUpdate={onScheduleUpdated}
       />
-    </div>
+    </>
   )
 }

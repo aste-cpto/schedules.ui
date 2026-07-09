@@ -1,7 +1,7 @@
 import { Loader2, Plus } from 'lucide-react'
 import { Button } from '~/ui/Button'
 import { ErrorAlert } from '~/ui/ErrorAlert'
-import { Pagination } from '~/ui/Pagination'
+import { TablePaginationBar } from '~/ui/TablePaginationBar'
 import { ScheduleModal } from '~/pages/SchedulesPage/components/ScheduleModal/ScheduleModal'
 import { SchedulesFilters } from '~/pages/SchedulesPage/components/SchedulesFilters'
 import { SchedulesTable } from '~/pages/SchedulesPage/components/SchedulesTable'
@@ -44,6 +44,12 @@ function SchedulesPage() {
           <>
             <SchedulesFilters {...filters} />
 
+            <TablePaginationBar
+              rangeLabel={rangeLabel}
+              pagination={pagination}
+              onPageChange={setPage}
+            />
+
             <div className="relative">
               <SchedulesTable
                 schedules={schedules}
@@ -59,20 +65,11 @@ function SchedulesPage() {
               )}
             </div>
 
-            {(pagination?.pagesCount ?? 0) > 1 || rangeLabel ? (
-              <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                {rangeLabel && <p className="text-sm text-text-secondary">{rangeLabel}</p>}
-
-                {pagination && pagination.pagesCount > 1 && (
-                  <Pagination
-                    page={pagination.page}
-                    pagesCount={pagination.pagesCount}
-                    onPageChange={setPage}
-                    className="sm:ml-auto"
-                  />
-                )}
-              </div>
-            ) : null}
+            <TablePaginationBar
+              rangeLabel={rangeLabel}
+              pagination={pagination}
+              onPageChange={setPage}
+            />
           </>
         )}
       </div>

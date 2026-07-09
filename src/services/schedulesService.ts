@@ -8,36 +8,9 @@ import type {
   UpdateScheduleDto,
 } from '~/types/api/schedule'
 
-function filterSchedulesByDate(
-  items: ScheduleDto[],
-  startDate?: string,
-  endDate?: string,
-): ScheduleDto[] {
-  if (!startDate && !endDate) return items
-
-  return items.filter((item) => {
-    const itemStart = item.startDate.slice(0, 10)
-    const itemEnd = item.endDate.slice(0, 10)
-
-    if (startDate && itemEnd < startDate) return false
-    if (endDate && itemStart > endDate) return false
-
-    return true
-  })
-}
-
 export const schedulesService = {
-  async getList(params?: SchedulesListParams) {
-    const data = await apiClient<SchedulesListResponse>(
-      `/schedules${buildApiListQuery(params)}`,
-    )
-
-    const filteredItems = filterSchedulesByDate(data.items, params?.startDate, params?.endDate)
-
-    return {
-      ...data,
-      items: filteredItems,
-    }
+  getList(params?: SchedulesListParams) {
+    return apiClient<SchedulesListResponse>(`/schedules${buildApiListQuery(params)}`)
   },
 
   create(payload: CreateScheduleDto) {

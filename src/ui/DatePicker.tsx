@@ -13,14 +13,16 @@ const UK_WEEKDAY_SHORT: Record<string, string> = {
   вівторок: 'Вт',
   середа: 'Ср',
   четвер: 'Чт',
-  "п'ятниця": 'Пт',
-  пʼятниця: 'Пт',
   пятниця: 'Пт',
   субота: 'Сб',
 }
 
+function normalizeWeekdayKey(day: string): string {
+  return day.toLowerCase().replace(/[''`ʼ\u2019]/g, '')
+}
+
 function formatWeekDay(day: string): string {
-  return UK_WEEKDAY_SHORT[day.toLowerCase()] ?? day.slice(0, 2)
+  return UK_WEEKDAY_SHORT[normalizeWeekdayKey(day)] ?? day.slice(0, 2)
 }
 
 type DatePickerInputProps = {
@@ -37,26 +39,38 @@ const DatePickerInput = forwardRef<HTMLButtonElement, DatePickerInputProps>(
 
     return (
       <div className="datepicker-field">
-        <button
-          type="button"
-          ref={ref}
-          onClick={onClick}
-          className={cn('datepicker-field__trigger', isOpen && 'datepicker-field__trigger--open')}
+        <div
+          className={cn(
+            'datepicker-field__trigger relative',
+            isOpen && 'datepicker-field__trigger--open',
+          )}
         >
-          <span
-            className={cn(
-              'datepicker-field__value',
-              !hasValue && 'datepicker-field__value--placeholder',
-            )}
+          <button
+            type="button"
+            ref={ref}
+            onClick={onClick}
+            className="flex w-full min-w-0 items-center justify-between gap-2 border-0 bg-transparent p-0 text-left text-inherit"
           >
-            {value || placeholder}
-          </span>
+            <span
+              className={cn(
+                'datepicker-field__value',
+                !hasValue && 'datepicker-field__value--placeholder',
+                hasValue && 'pr-5',
+              )}
+            >
+              {value || placeholder}
+            </span>
 
-          <span className="flex shrink-0 items-center gap-1">
-            {hasValue && <FieldClearButton onClick={() => onClear?.()} />}
             <Calendar className="datepicker-field__icon" aria-hidden />
-          </span>
-        </button>
+          </button>
+
+          {hasValue && (
+            <FieldClearButton
+              onClick={() => onClear?.()}
+              className="absolute right-9 top-1/2 z-10 -translate-y-1/2"
+            />
+          )}
+        </div>
       </div>
     )
   },

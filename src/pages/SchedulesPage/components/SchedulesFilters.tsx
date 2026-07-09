@@ -35,7 +35,7 @@ export const SchedulesFilters = ({
   const endDate = parseIsoDate(values.endDate) ?? undefined
 
   return (
-    <div className="rounded-xl border border-border bg-bg-surface p-5 shadow-sm">
+    <div className="rounded-xl border border-border bg-bg-surface p-3 shadow-sm">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-4">
         <SearchInput
           label="Пошук"

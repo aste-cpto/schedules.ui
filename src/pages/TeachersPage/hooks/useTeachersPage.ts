@@ -9,7 +9,7 @@ import {
 import type { TeacherListItemDto } from '~/types/api/teacher'
 import type { TeacherStatus } from '~/types/api/teacher'
 
-const DEFAULT_PAGE_RECORDS = 20
+const DEFAULT_PAGE_RECORDS = 10
 
 export type TeacherFormModalState =
   | { mode: 'create' }
@@ -19,7 +19,7 @@ export type TeacherFormModalState =
 export function useTeachersPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [pageRecords] = useState(DEFAULT_PAGE_RECORDS)
+  const [pageRecords, setPageRecords] = useState(DEFAULT_PAGE_RECORDS)
   const [formModal, setFormModal] = useState<TeacherFormModalState>(null)
 
   const debouncedSearch = useDebouncedValue(search)
@@ -50,6 +50,7 @@ export function useTeachersPage() {
 
   const filterValues: TeachersFiltersValues = {
     search,
+    pageRecords,
   }
 
   const rangeLabel =
@@ -76,6 +77,10 @@ export function useTeachersPage() {
       values: filterValues,
       onSearchChange: (value: string) => {
         setSearch(value)
+        resetPage()
+      },
+      onPageRecordsChange: (value: number) => {
+        setPageRecords(value)
         resetPage()
       },
     },

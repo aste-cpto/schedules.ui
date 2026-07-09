@@ -1,7 +1,7 @@
-import { Plus } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { Button } from '~/ui/Button'
 import { ErrorAlert } from '~/ui/ErrorAlert'
-import { Pagination } from '~/ui/Pagination'
+import { TablePaginationBar } from '~/ui/TablePaginationBar'
 import { TeacherModal } from '~/pages/TeachersPage/components/TeacherModal/TeacherModal'
 import { TeachersFilters } from '~/pages/TeachersPage/components/TeachersFilters'
 import { TeachersTable } from '~/pages/TeachersPage/components/TeachersTable'
@@ -38,34 +38,34 @@ function TeachersPage() {
       </div>
 
       <div className="space-y-4">
-        {loading && (
-          <p className="rounded-xl border border-border bg-bg-surface px-4 py-8 text-center text-text-secondary">
-            Завантаження викладачів...
-          </p>
-        )}
+        {error && <ErrorAlert message={error} onRetry={() => void refetch()} />}
 
-        {!loading && error && <ErrorAlert message={error} onRetry={() => void refetch()} />}
-
-        {!loading && !error && (
+        {!error && (
           <>
             <TeachersFilters {...filters} />
 
-            <TeachersTable teachers={teachers} rowActions={rowActions} />
+            <TablePaginationBar
+              rangeLabel={rangeLabel}
+              pagination={pagination}
+              onPageChange={setPage}
+            />
 
-            {(pagination?.pagesCount ?? 0) > 1 || rangeLabel ? (
-              <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                {rangeLabel && <p className="text-sm text-text-secondary">{rangeLabel}</p>}
+            <div className="relative">
+              <TeachersTable teachers={teachers} rowActions={rowActions} />
 
-                {pagination && pagination.pagesCount > 1 && (
-                  <Pagination
-                    page={pagination.page}
-                    pagesCount={pagination.pagesCount}
-                    onPageChange={setPage}
-                    className="sm:ml-auto"
-                  />
-                )}
-              </div>
-            ) : null}
+              {loading && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-xl bg-bg-surface/80 text-sm text-text-secondary backdrop-blur-[1px]">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Завантаження викладачів...
+                </div>
+              )}
+            </div>
+
+            <TablePaginationBar
+              rangeLabel={rangeLabel}
+              pagination={pagination}
+              onPageChange={setPage}
+            />
           </>
         )}
       </div>

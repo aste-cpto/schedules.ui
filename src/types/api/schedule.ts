@@ -14,9 +14,7 @@ export type SchedulesListParams = {
   search?: string
   page?: number
   pageRecords?: number
-  /** Client-side filter only — not sent to API */
   startDate?: string
-  /** Client-side filter only — not sent to API */
   endDate?: string
 }
 

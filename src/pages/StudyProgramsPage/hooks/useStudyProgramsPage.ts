@@ -7,7 +7,7 @@ import {
 } from '~/pages/StudyProgramsPage/config/studyProgramRowActions'
 import { useMemo, useState } from 'react'
 
-const DEFAULT_PAGE_RECORDS = 20
+const DEFAULT_PAGE_RECORDS = 10
 
 export type StudyProgramFormModalState =
   | { mode: 'create' }
@@ -17,7 +17,7 @@ export type StudyProgramFormModalState =
 export function useStudyProgramsPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [pageRecords] = useState(DEFAULT_PAGE_RECORDS)
+  const [pageRecords, setPageRecords] = useState(DEFAULT_PAGE_RECORDS)
   const [formModal, setFormModal] = useState<StudyProgramFormModalState>(null)
   const [detailsProgramId, setDetailsProgramId] = useState<number | null>(null)
 
@@ -49,6 +49,7 @@ export function useStudyProgramsPage() {
 
   const filterValues: StudyProgramsFiltersValues = {
     search,
+    pageRecords,
   }
 
   const rangeLabel =
@@ -77,6 +78,10 @@ export function useStudyProgramsPage() {
       values: filterValues,
       onSearchChange: (value: string) => {
         setSearch(value)
+        resetPage()
+      },
+      onPageRecordsChange: (value: number) => {
+        setPageRecords(value)
         resetPage()
       },
     },

@@ -1,4 +1,5 @@
 import { TableHeader } from '~/ui/TableHeader'
+import { DataTable } from '~/ui/DataTable'
 import { cn } from '~/lib/cn'
 import { StudyProgramRowActionsMenu } from '~/pages/StudyProgramsPage/components/StudyProgramRowActionsMenu'
 import {
@@ -33,9 +34,8 @@ function renderCell(
 
 export const StudyProgramsTable = ({ studyPrograms, rowActions }: StudyProgramsTableProps) => {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-bg-surface shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse text-sm">
+    <DataTable>
+      <table className="min-w-full border-collapse text-sm">
           <TableHeader
             columns={STUDY_PROGRAM_TABLE_COLUMNS.map((column) => ({
               key: column.key,
@@ -73,7 +73,6 @@ export const StudyProgramsTable = ({ studyPrograms, rowActions }: StudyProgramsT
             )}
           </tbody>
         </table>
-      </div>
-    </div>
+    </DataTable>
   )
 }

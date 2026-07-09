@@ -1,4 +1,5 @@
 import { TableHeader } from '~/ui/TableHeader'
+import { DataTable } from '~/ui/DataTable'
 import { cn } from '~/lib/cn'
 import { TeacherRowActionsMenu } from '~/pages/TeachersPage/components/TeacherRowActionsMenu'
 import { TeacherStatusBadge } from '~/pages/TeachersPage/components/TeacherStatusBadge'
@@ -36,9 +37,8 @@ function renderCell(
 
 export const TeachersTable = ({ teachers, rowActions }: TeachersTableProps) => {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-bg-surface shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse text-sm">
+    <DataTable>
+      <table className="min-w-full border-collapse text-sm">
           <TableHeader
             columns={TEACHER_TABLE_COLUMNS.map((column) => ({
               key: column.key,
@@ -76,7 +76,6 @@ export const TeachersTable = ({ teachers, rowActions }: TeachersTableProps) => {
             )}
           </tbody>
         </table>
-      </div>
-    </div>
+    </DataTable>
   )
 }
