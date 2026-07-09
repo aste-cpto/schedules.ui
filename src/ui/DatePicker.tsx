@@ -2,7 +2,7 @@ import { uk } from 'date-fns/locale'
 import { Calendar } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 import DatePickerLib from 'react-datepicker'
-import { FieldClearButton } from '~/components/ui/FieldClearButton'
+import { FieldClearButton } from '~/ui/FieldClearButton'
 import { cn } from '~/lib/cn'
 import { formatDateToDisplay, formatDateToIso, parseIsoDate } from '~/lib/dateUtils'
 
@@ -13,7 +13,7 @@ const UK_WEEKDAY_SHORT: Record<string, string> = {
   середа: 'Ср',
   четвер: 'Чт',
   "п'ятниця": 'Пт',
-  "пʼятниця": 'Пт',
+  пʼятниця: 'Пт',
   пятниця: 'Пт',
   субота: 'Сб',
 }

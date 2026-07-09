@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { LessonDto } from '~/types/api/lesson'
 import { getLessonDateKey } from '~/lib/lessonDateUtils'
-import type { TableHeaderColumn } from '~/components/ui/TableHeader'
+import type { TableHeaderColumn } from '~/ui/TableHeader'
 import type { ScheduleDto } from '~/types/api/schedule'
 import { formatDateDisplay, getBusinessDatesInRange } from '~/utils/dateHelpers'
 

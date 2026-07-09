@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useToast } from '~/components/ui/toast/useToast'
+import { useToast } from '~/ui/toast/useToast'
 import { toApiDateTime } from '~/lib/dateUtils'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { VALIDATION_REQUIRED_FIELDS } from '~/lib/validationMessages'
 import { DEFAULT_SCHEDULE_STATUS } from '~/pages/SchedulesPage/config/scheduleStatus'
 import { schedulesService } from '~/services/schedulesService'
 import { studyProgramsService } from '~/services/studyProgramsService'
-import type { SelectOption } from '~/components/ui/Select'
+import type { SelectOption } from '~/ui/Select'
 
 type UseScheduleFormOptions = {
   open: boolean

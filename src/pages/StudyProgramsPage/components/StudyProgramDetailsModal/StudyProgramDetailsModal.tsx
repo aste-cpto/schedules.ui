@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { ModalLayout } from '~/components/ui/ModalLayout'
-import { useToast } from '~/components/ui/toast/useToast'
+import { ModalLayout } from '~/ui/ModalLayout'
+import { useToast } from '~/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { studyProgramsService } from '~/services/studyProgramsService'
 import type { StudyProgramDetailsDto } from '~/types/api/studyProgram'
 import { StudyProgramSubjectsTable } from './components/StudyProgramSubjectsTable'
-import { Button } from '~/components/ui/Button'
+import { Button } from '~/ui/Button'
 
 type StudyProgramDetailsModalProps = {
   open: boolean

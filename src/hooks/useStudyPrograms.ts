@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useToast } from '~/components/ui/toast/useToast'
+import { useToast } from '~/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { estimateTotalFromApiResponse } from '~/lib/paginationUtils'
 import { studyProgramsService } from '~/services/studyProgramsService'

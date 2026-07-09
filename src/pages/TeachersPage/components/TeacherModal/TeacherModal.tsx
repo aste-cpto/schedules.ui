@@ -1,8 +1,9 @@
-import { ModalLayout } from '~/components/ui/ModalLayout'
-import { FormErrorMessage } from '~/components/ui/FormErrorMessage'
-import { Input } from '~/components/ui/Input'
-import { Select } from '~/components/ui/Select'
-import { Button } from '~/components/ui/Button'
+import { ModalLayout } from '~/ui/ModalLayout'
+import { FormErrorMessage } from '~/ui/FormErrorMessage'
+import { Input } from '~/ui/Input'
+import { Select } from '~/ui/Select'
+import { Combobox } from '~/ui/Combobox/Combobox'
+import { Button } from '~/ui/Button'
 import { useTeacherForm } from './hooks/useTeacherForm'
 
 import type { TeacherStatus } from '~/types/api/teacher'
@@ -75,15 +76,7 @@ export const TeacherModal = ({
               label="По батькові"
               value={state.patronymic}
               onChange={(event) => actions.setPatronymic(event.target.value)}
-              wrapperClassName="sm:col-span-2"
-              required
-            />
-            <Input
-              label="Годин на рік"
-              type="number"
-              min={1}
-              value={state.hours}
-              onChange={(event) => actions.setHours(event.target.value)}
+              wrapperClassName={state.showStatus ? undefined : 'sm:col-span-2'}
               required
             />
             {state.showStatus && (
@@ -92,17 +85,27 @@ export const TeacherModal = ({
                 options={state.statusOptions}
                 value={state.status}
                 onChange={(value) => actions.setStatus(value as TeacherStatus)}
+                disabled
               />
             )}
             {state.showLoadYear && (
-              <Input
+              <Combobox
                 label="Рік навантаження"
-                value={state.loadYear ?? ''}
-                readOnly
-                clearable={false}
-                wrapperClassName={state.showStatus ? undefined : 'sm:col-span-1'}
+                value={state.selectedYear}
+                options={state.yearOptions}
+                onChange={(value) => actions.handleYearChange(value)}
+                placeholder="Введіть або оберіть рік..."
               />
             )}
+            <Input
+              label="Годин на рік"
+              type="number"
+              min={1}
+              value={state.hours}
+              onChange={(event) => actions.setHours(event.target.value)}
+              required
+              wrapperClassName={state.showLoadYear ? undefined : 'sm:col-span-2'}
+            />
           </div>
         )}
 

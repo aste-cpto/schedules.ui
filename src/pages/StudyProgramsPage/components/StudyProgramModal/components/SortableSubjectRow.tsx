@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2 } from 'lucide-react'
-import { Input } from '~/components/ui/Input'
+import { Input } from '~/ui/Input'
 import { cn } from '~/lib/cn'
 
 export type SubjectField = {

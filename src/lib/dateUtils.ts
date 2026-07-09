@@ -50,3 +50,7 @@ export function toIsoDateString(value: string): string {
 export function startOfDay(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 }
+
+export function getCurrentYear(): number {
+  return new Date().getFullYear()
+}

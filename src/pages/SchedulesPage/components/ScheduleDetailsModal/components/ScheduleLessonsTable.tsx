@@ -1,4 +1,4 @@
-import { TableHeader } from '~/components/ui/TableHeader'
+import { TableHeader } from '~/ui/TableHeader'
 import type { LessonDto } from '~/types/api/lesson'
 import type { ScheduleDto } from '~/types/api/schedule'
 import { ScheduleFooter } from './ScheduleFooter'

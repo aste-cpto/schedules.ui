@@ -1,5 +1,5 @@
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react'
-import { FieldClearButton } from '~/components/ui/FieldClearButton'
+import { FieldClearButton } from '~/ui/FieldClearButton'
 import { cn } from '~/lib/cn'
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -50,12 +50,7 @@ export const Input = ({
           value={value}
           defaultValue={defaultValue}
           onChange={onChange}
-          className={cn(
-            'field-input',
-            showLeadingIcon && 'pl-9',
-            showClear && 'pr-9',
-            className,
-          )}
+          className={cn('field-input', showLeadingIcon && 'pl-9', showClear && 'pr-9', className)}
           {...props}
         />
 

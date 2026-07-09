@@ -1,4 +1,4 @@
-import { TableHeader } from '~/components/ui/TableHeader'
+import { TableHeader } from '~/ui/TableHeader'
 import { cn } from '~/lib/cn'
 import { RowActionsMenu } from '~/pages/SchedulesPage/components/RowActionsMenu'
 import { ScheduleDetailsModal } from '~/pages/SchedulesPage/components/ScheduleDetailsModal/ScheduleDetailsModal'
@@ -14,7 +14,11 @@ type SchedulesTableProps = {
   onScheduleUpdated?: () => void
 }
 
-export const SchedulesTable = ({ schedules, rowActions, onScheduleUpdated }: SchedulesTableProps) => {
+export const SchedulesTable = ({
+  schedules,
+  rowActions,
+  onScheduleUpdated,
+}: SchedulesTableProps) => {
   const { isModalOpen, setIsModalOpen, scheduleDto, enhancedActions } = useScheduleTableState(
     schedules,
     rowActions,

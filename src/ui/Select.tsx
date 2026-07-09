@@ -15,6 +15,7 @@ type SelectProps = {
   onChange: (value: string) => void
   wrapperClassName?: string
   id?: string
+  disabled?: boolean
 }
 
 export const Select = ({
@@ -24,6 +25,7 @@ export const Select = ({
   onChange,
   wrapperClassName,
   id,
+  disabled,
 }: SelectProps) => {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -33,7 +35,7 @@ export const Select = ({
   useClickOutside(containerRef, () => setOpen(false), open)
 
   return (
-    <div className={cn('field-group', wrapperClassName)}>
+    <div className={cn('field-group', wrapperClassName, disabled && 'opacity-60 cursor-not-allowed')}>
       {label && (
         <label id={`${selectId}-label`} className="field-label">
           {label}
@@ -47,8 +49,9 @@ export const Select = ({
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-labelledby={label ? `${selectId}-label` : undefined}
-          onClick={() => setOpen((prev) => !prev)}
-          className="field-select flex w-full items-center justify-between text-left"
+          onClick={() => !disabled && setOpen((prev) => !prev)}
+          disabled={disabled}
+          className={cn("field-select flex w-full items-center justify-between text-left", disabled && "cursor-not-allowed")}
         >
           <span>{selectedOption?.label ?? value}</span>
           <ChevronDown

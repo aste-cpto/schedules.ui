@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { Search } from 'lucide-react'
-import { Input } from '~/components/ui/Input'
+import { Input } from '~/ui/Input'
 
 type SearchInputProps = Omit<ComponentProps<typeof Input>, 'type' | 'leadingIcon'>
 

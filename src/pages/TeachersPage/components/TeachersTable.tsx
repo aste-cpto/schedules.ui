@@ -1,4 +1,4 @@
-import { TableHeader } from '~/components/ui/TableHeader'
+import { TableHeader } from '~/ui/TableHeader'
 import { cn } from '~/lib/cn'
 import { TeacherRowActionsMenu } from '~/pages/TeachersPage/components/TeacherRowActionsMenu'
 import { TeacherStatusBadge } from '~/pages/TeachersPage/components/TeacherStatusBadge'

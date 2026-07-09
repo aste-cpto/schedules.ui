@@ -1,3 +1,5 @@
+import { getCurrentYear } from '~/lib/dateUtils'
+
 export type TeacherTableColumnKey =
   | 'index'
   | 'displayName'
@@ -11,6 +13,8 @@ export type TeacherTableColumn = {
   headerClassName?: string
   cellClassName?: string
 }
+
+const currentYear = getCurrentYear()
 
 export const TEACHER_TABLE_COLUMNS: TeacherTableColumn[] = [
   {
@@ -33,7 +37,7 @@ export const TEACHER_TABLE_COLUMNS: TeacherTableColumn[] = [
   },
   {
     key: 'loadHours',
-    label: 'Годин на рік',
+    label: `Годин на ${currentYear} рік`,
     headerClassName: 'w-36 whitespace-nowrap px-4 py-3 font-semibold',
     cellClassName: 'whitespace-nowrap px-4 py-3 tabular-nums',
   },

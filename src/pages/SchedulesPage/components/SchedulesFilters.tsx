@@ -1,6 +1,6 @@
-import { DatePicker } from '~/components/ui/DatePicker'
-import { SearchInput } from '~/components/ui/SearchInput'
-import { Select } from '~/components/ui/Select'
+import { DatePicker } from '~/ui/DatePicker'
+import { SearchInput } from '~/ui/SearchInput'
+import { Select } from '~/ui/Select'
 import { parseIsoDate } from '~/lib/dateUtils'
 
 export type SchedulesFiltersValues = {

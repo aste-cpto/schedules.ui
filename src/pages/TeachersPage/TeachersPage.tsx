@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
-import { Button } from '~/components/ui/Button'
-import { ErrorAlert } from '~/components/ui/ErrorAlert'
-import { Pagination } from '~/components/ui/Pagination'
+import { Button } from '~/ui/Button'
+import { ErrorAlert } from '~/ui/ErrorAlert'
+import { Pagination } from '~/ui/Pagination'
 import { TeacherModal } from '~/pages/TeachersPage/components/TeacherModal/TeacherModal'
 import { TeachersFilters } from '~/pages/TeachersPage/components/TeachersFilters'
 import { TeachersTable } from '~/pages/TeachersPage/components/TeachersTable'
@@ -76,7 +76,10 @@ function TeachersPage() {
         teacherId={formModal?.mode === 'edit' ? formModal.teacherId : undefined}
         initialStatus={formModal?.mode === 'edit' ? formModal.status : undefined}
         onClose={closeFormModal}
-        onSuccess={() => void refetch()}
+        onSuccess={() => {
+          closeFormModal()
+          void refetch()
+        }}
       />
     </main>
   )

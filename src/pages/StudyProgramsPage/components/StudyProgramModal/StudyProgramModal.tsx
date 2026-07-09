@@ -1,12 +1,12 @@
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
-import { ModalLayout } from '~/components/ui/ModalLayout'
-import { FormErrorMessage } from '~/components/ui/FormErrorMessage'
-import { Input } from '~/components/ui/Input'
+import { ModalLayout } from '~/ui/ModalLayout'
+import { FormErrorMessage } from '~/ui/FormErrorMessage'
+import { Input } from '~/ui/Input'
 import { SortableSubjectRow } from './components/SortableSubjectRow'
 import { useStudyProgramForm } from './hooks/useStudyProgramForm'
-import { Button } from '~/components/ui/Button'
+import { Button } from '~/ui/Button'
 
 type StudyProgramModalProps = {
   open: boolean

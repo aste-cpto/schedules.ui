@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { ToastProvider } from '~/components/ui/toast/ToastProvider'
+import { ToastProvider } from '~/ui/toast/ToastProvider'
 import '~/styles/tailwind.css'
 import '~/styles/main.scss'
 import { App } from '~/App'

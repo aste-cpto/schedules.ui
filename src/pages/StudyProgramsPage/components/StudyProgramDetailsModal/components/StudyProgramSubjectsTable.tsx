@@ -1,6 +1,6 @@
 import { cn } from '~/lib/cn'
 import type { StudyProgramSubjectDto } from '~/types/api/studyProgram'
-import { TableHeader, type TableHeaderColumn } from '~/components/ui/TableHeader'
+import { TableHeader, type TableHeaderColumn } from '~/ui/TableHeader'
 
 type StudyProgramSubjectsTableProps = {
   subjects: StudyProgramSubjectDto[]

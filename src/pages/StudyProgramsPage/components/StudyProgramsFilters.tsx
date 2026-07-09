@@ -1,4 +1,4 @@
-import { SearchInput } from '~/components/ui/SearchInput'
+import { SearchInput } from '~/ui/SearchInput'
 
 export type StudyProgramsFiltersValues = {
   search: string

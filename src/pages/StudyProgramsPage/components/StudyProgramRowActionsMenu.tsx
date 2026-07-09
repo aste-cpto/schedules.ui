@@ -1,7 +1,7 @@
 import { EllipsisVertical } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ConfirmModal } from '~/components/ui/ConfirmModal'
+import { ConfirmModal } from '~/ui/ConfirmModal'
 import { useClickOutside } from '~/hooks/useClickOutside'
 import { cn } from '~/lib/cn'
 import {
