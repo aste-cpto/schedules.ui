@@ -3,6 +3,7 @@ import { Calendar } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 import DatePickerLib from 'react-datepicker'
 import { FieldClearButton } from '~/ui/FieldClearButton'
+import { DatePickerCalendarHeader } from '~/ui/DatePicker/DatePickerCalendarHeader'
 import { cn } from '~/lib/cn'
 import { formatDateToDisplay, formatDateToIso, parseIsoDate } from '~/lib/dateUtils'
 
@@ -113,6 +114,7 @@ export const DatePicker = ({
         maxDate={maxDate}
         showPopperArrow={false}
         popperPlacement="bottom-start"
+        renderCustomHeader={(props) => <DatePickerCalendarHeader {...props} />}
         calendarClassName="datepicker-theme"
         popperClassName="datepicker-popper"
         customInput={
