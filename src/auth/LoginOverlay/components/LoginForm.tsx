@@ -53,7 +53,12 @@ export const LoginForm = ({ state, actions }: LoginFormProps) => {
           required
         />
 
-        <Button type="submit" variant="primary" className="mt-3 w-full" disabled={state.isLoading}>
+        <Button
+          type="submit"
+          variant="primary"
+          className="mt-3 w-full h-[45px]"
+          disabled={state.isLoading}
+        >
           {state.isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Увійти'}
         </Button>
       </form>
