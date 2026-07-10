@@ -83,7 +83,6 @@ export const useScheduleForm = ({ open, onSuccess }: UseScheduleFormOptions) => 
         groupName: groupName.trim(),
         startDate: toApiDateTime(startDate, '00:00:00'),
         endDate: toApiDateTime(endDate, '23:59:59'),
-        status,
         studyProgramId: Number(studyProgramId),
       })
 

@@ -59,10 +59,6 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
   })
 
   useEffect(() => {
-    setCurrentSchedule(schedule)
-  }, [schedule])
-
-  useEffect(() => {
     if (isEditFormValid(editForm) && validationError) {
       setValidationError(null)
     }
@@ -80,33 +76,49 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (!open || !currentSchedule) {
+    if (!open || !schedule) {
       setLessons([])
       setInitialLessons([])
       setIsEditing(false)
       setValidationError(null)
+      if (!open) {
+        setCurrentSchedule(null)
+      }
       return
     }
 
-    const scheduleId = currentSchedule.id
+    const scheduleId = schedule.id
+    let cancelled = false
 
     const loadData = async () => {
       setLoading(true)
+      setCurrentSchedule(schedule)
+
       try {
-        resetForm(currentSchedule)
+        resetForm(schedule)
         const data = await schedulesService.getById(scheduleId)
+        if (cancelled) return
+
+        setCurrentSchedule(data)
         const loadedLessons = data.lessons || []
         setLessons(loadedLessons)
         setInitialLessons(loadedLessons)
       } catch (err) {
+        if (cancelled) return
         toast.error(getErrorMessage(err, 'Не вдалося завантажити деталі розкладу'))
       } finally {
-        setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+        }
       }
     }
 
     void loadData()
-  }, [open, currentSchedule?.id, resetForm, toast])
+
+    return () => {
+      cancelled = true
+    }
+  }, [open, schedule, resetForm, toast])
 
   const startEditing = () => {
     resetForm(currentSchedule)
@@ -143,11 +155,9 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
 
     try {
       const payload: UpdateScheduleDto = {
-        id: currentSchedule.id,
         groupName: editForm.groupName,
         startDate: mergeScheduleDateTime(currentSchedule.startDate, editForm.startDate),
         endDate: mergeScheduleDateTime(currentSchedule.endDate, editForm.endDate),
-        status: currentSchedule.status ?? '',
         studyProgramId: currentSchedule.studyProgramId,
       }
 
@@ -174,10 +184,7 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
       )
 
       const updated = await schedulesService.getById(currentSchedule.id)
-      setCurrentSchedule({
-        ...updated,
-        studyProgramName: updated.studyProgramName || currentSchedule.studyProgramName,
-      })
+      setCurrentSchedule(updated)
       resetForm(updated)
       setInitialLessons(lessons)
       setIsEditing(false)

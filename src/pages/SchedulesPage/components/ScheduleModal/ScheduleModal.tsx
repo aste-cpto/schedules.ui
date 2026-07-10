@@ -72,6 +72,7 @@ export const ScheduleModal = ({ open, onClose, onSuccess }: ScheduleModalProps) 
               value={state.status}
               onChange={actions.setStatus}
               wrapperClassName="sm:col-span-2"
+              disabled
             />
           </div>
         )}

@@ -1,8 +1,9 @@
 import { apiClient } from '~/lib/apiClient'
-import { buildApiListQuery } from '~/lib/buildApiQuery'
+import { buildSchedulesListQuery } from '~/lib/buildApiQuery'
+import { normalizeScheduleDetails } from '~/mappers/scheduleMapper'
 import type {
   CreateScheduleDto,
-  ScheduleDto,
+  ScheduleDetailsApiDto,
   SchedulesListParams,
   SchedulesListResponse,
   UpdateScheduleDto,
@@ -10,7 +11,7 @@ import type {
 
 export const schedulesService = {
   getList(params?: SchedulesListParams) {
-    return apiClient<SchedulesListResponse>(`/schedules${buildApiListQuery(params)}`)
+    return apiClient<SchedulesListResponse>(`/schedules${buildSchedulesListQuery(params)}`)
   },
 
   create(payload: CreateScheduleDto) {
@@ -33,7 +34,8 @@ export const schedulesService = {
     })
   },
 
-  getById(id: number) {
-    return apiClient<ScheduleDto>(`/schedules/${id}`)
+  async getById(id: number) {
+    const data = await apiClient<ScheduleDetailsApiDto>(`/schedules/${id}`)
+    return normalizeScheduleDetails(data)
   },
 }

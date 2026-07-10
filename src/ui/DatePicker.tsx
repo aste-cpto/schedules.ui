@@ -87,6 +87,7 @@ type DatePickerProps = {
   minDate?: Date
   maxDate?: Date
   id?: string
+  disabled?: boolean
 }
 
 export const DatePicker = ({
@@ -98,6 +99,7 @@ export const DatePicker = ({
   minDate,
   maxDate,
   id,
+  disabled,
 }: DatePickerProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const fieldId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
@@ -105,7 +107,7 @@ export const DatePicker = ({
   const displayValue = selected ? formatDateToDisplay(selected) : ''
 
   return (
-    <div className={cn('field-group', wrapperClassName)}>
+    <div className={cn('field-group', wrapperClassName, disabled && 'opacity-60')}>
       {label && (
         <label htmlFor={fieldId} className="field-label">
           {label}
@@ -114,6 +116,7 @@ export const DatePicker = ({
 
       <DatePickerLib
         id={fieldId}
+        disabled={disabled}
         wrapperClassName="w-full"
         selected={selected}
         open={isOpen}
@@ -136,7 +139,7 @@ export const DatePicker = ({
             value={displayValue}
             placeholder={placeholder}
             isOpen={isOpen}
-            onClear={() => onChange('')}
+            onClear={disabled ? undefined : () => onChange('')}
           />
         }
       />

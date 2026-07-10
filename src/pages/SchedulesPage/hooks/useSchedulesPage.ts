@@ -22,12 +22,10 @@ export function useSchedulesPage() {
   const listParams = useMemo(
     () => ({
       search: debouncedSearch || undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
       page,
       pageRecords,
     }),
-    [debouncedSearch, endDate, page, pageRecords, startDate],
+    [debouncedSearch, page, pageRecords],
   )
 
   const { schedules, loading, error, pagination, refetch, deleteSchedule } =

@@ -1,4 +1,4 @@
-export type LessonType = 'Pair' | 'Practice'
+export type LessonType = number
 
 export type LessonTeacherDto = {
   id: number

@@ -4,7 +4,7 @@ import { useAutoListFetch } from '~/hooks/useAutoListFetch'
 import { useToast } from '~/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { estimateTotalFromApiResponse } from '~/lib/paginationUtils'
-import { mapScheduleDtoToSchedule } from '~/mappers/scheduleMapper'
+import { mapScheduleShortToSchedule } from '~/mappers/scheduleMapper'
 import { schedulesService } from '~/services/schedulesService'
 import type { SchedulesListParams } from '~/types/api/schedule'
 import type { Schedule } from '~/types/schedule'
@@ -47,7 +47,7 @@ export function useSchedules(params?: SchedulesListParams): UseSchedulesResult {
 
     try {
       const data = await schedulesService.getList(params)
-      setSchedules(data.items.map(mapScheduleDtoToSchedule))
+      setSchedules(data.items.map(mapScheduleShortToSchedule))
       setPagination({
         page: data.page,
         pageRecords: data.pageRecords,
@@ -74,11 +74,11 @@ export function useSchedules(params?: SchedulesListParams): UseSchedulesResult {
         setLoading(false)
       }
     }
-  }, [params?.endDate, params?.page, params?.pageRecords, params?.search, params?.startDate, toast])
+  }, [params?.page, params?.pageRecords, params?.search, params?.year, toast])
 
   useAutoListFetch(
     refetch,
-    [params?.endDate, params?.page, params?.pageRecords, params?.search, params?.startDate],
+    [params?.page, params?.pageRecords, params?.search, params?.year],
     { pause: isModalOpen },
   )
 

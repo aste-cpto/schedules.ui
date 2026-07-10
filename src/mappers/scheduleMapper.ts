@@ -1,5 +1,9 @@
 import { formatDateToDisplay, parseIsoDate } from '~/lib/dateUtils'
-import type { ScheduleDto } from '~/types/api/schedule'
+import type {
+  ScheduleDetailsApiDto,
+  ScheduleDto,
+  ScheduleShortDto,
+} from '~/types/api/schedule'
 import type { Schedule, ScheduleStatus } from '~/types/schedule'
 
 function formatDisplayDate(value: string): string {
@@ -21,10 +25,24 @@ function mapStatus(status: string | null | undefined): ScheduleStatus {
   return 'неактивний'
 }
 
-export function mapScheduleDtoToSchedule(dto: ScheduleDto): Schedule {
+export function normalizeScheduleDetails(dto: ScheduleDetailsApiDto): ScheduleDto {
   return {
     id: dto.id,
-    status: mapStatus(dto.status),
+    startDate: dto.startDate,
+    endDate: dto.endDate,
+    groupName: dto.groupName,
+    studyProgramId: dto.studyProgram.id,
+    studyProgramName: dto.studyProgram.name,
+    lessons: dto.lessons,
+    createdAt: dto.createdAt,
+    updatedAt: dto.updatedAt,
+  }
+}
+
+export function mapScheduleShortToSchedule(dto: ScheduleShortDto): Schedule {
+  return {
+    id: dto.id,
+    status: mapStatus(undefined),
     group: dto.groupName,
     program: dto.studyProgramName,
     start: formatDisplayDate(dto.startDate),
@@ -32,7 +50,7 @@ export function mapScheduleDtoToSchedule(dto: ScheduleDto): Schedule {
     startDateIso: dto.startDate,
     endDateIso: dto.endDate,
     studyProgramId: dto.studyProgramId,
-    apiStatus: dto.status,
+    apiStatus: '',
   }
 }
 
