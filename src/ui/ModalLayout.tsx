@@ -8,6 +8,7 @@ type ModalLayoutProps = {
   onClose: () => void
   children: ReactNode
   panelClassName?: string
+  overlayClassName?: string
   closeLabel?: string
   showCloseButton?: boolean
   labelledBy?: string
@@ -18,6 +19,7 @@ export const ModalLayout = ({
   onClose,
   children,
   panelClassName,
+  overlayClassName,
   closeLabel = 'Закрити',
   showCloseButton = true,
   labelledBy,
@@ -31,7 +33,10 @@ export const ModalLayout = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+      className={cn(
+        'fixed inset-0 flex items-center justify-center bg-black/40 p-4',
+        overlayClassName ?? 'z-[100]',
+      )}
       onClick={onClose}
       role="presentation"
     >
@@ -56,7 +61,7 @@ export const ModalLayout = ({
           aria-labelledby={labelledBy}
           aria-describedby={describedBy}
           className={cn(
-            'rounded-xl border border-border bg-bg-surface px-6 py-8 shadow-lg w-full',
+            'rounded-xl border border-border bg-bg-surface px-6 py-8 shadow-lg max-h-[90vh] w-full overflow-y-auto',
             otherPanelClasses,
           )}
         >

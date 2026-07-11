@@ -3,7 +3,6 @@ import { useToast } from '~/ui/toast/useToast'
 import { toIsoDateString, parseIsoDate } from '~/lib/dateUtils'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { VALIDATION_REQUIRED_FIELDS } from '~/lib/validationMessages'
-import { lessonsService } from '~/services/lessonsService'
 import { schedulesService } from '~/services/schedulesService'
 import type { LessonDto } from '~/types/api/lesson'
 import type { ScheduleDto, UpdateScheduleDto } from '~/types/api/schedule'
@@ -45,7 +44,7 @@ type Props = {
 export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
   const toast = useToast()
   const [currentSchedule, setCurrentSchedule] = useState<ScheduleDto | null>(schedule)
-  const [lessons, setLessons] = useState<LessonDto[]>([])
+  const [lessons, setLessonsState] = useState<LessonDto[]>([])
   const [initialLessons, setInitialLessons] = useState<LessonDto[]>([])
   const [loading, setLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -77,7 +76,7 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
 
   useEffect(() => {
     if (!open || !schedule) {
-      setLessons([])
+      setLessonsState([])
       setInitialLessons([])
       setIsEditing(false)
       setValidationError(null)
@@ -101,7 +100,7 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
 
         setCurrentSchedule(data)
         const loadedLessons = data.lessons || []
-        setLessons(loadedLessons)
+        setLessonsState(loadedLessons)
         setInitialLessons(loadedLessons)
       } catch (err) {
         if (cancelled) return
@@ -128,7 +127,7 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
 
   const cancelEditing = () => {
     setIsEditing(false)
-    setLessons(initialLessons)
+    setLessonsState(initialLessons)
     resetForm(currentSchedule)
   }
 
@@ -136,11 +135,10 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
     setEditForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  const updateLessonHours = (lessonId: number, hours: number) => {
-    setLessons((prev) =>
-      prev.map((lesson) => (lesson.id === lessonId ? { ...lesson, hours } : lesson)),
-    )
-  }
+  const setLessons = useCallback((nextLessons: LessonDto[]) => {
+    setLessonsState(nextLessons)
+    setInitialLessons(nextLessons)
+  }, [])
 
   const saveEditing = async () => {
     if (!currentSchedule) return
@@ -163,30 +161,12 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
 
       await schedulesService.update(currentSchedule.id, payload)
 
-      const changedLessons = lessons.filter((lesson) => {
-        const initial = initialLessons.find((item) => item.id === lesson.id)
-        return initial && initial.hours !== lesson.hours
-      })
-
-      await Promise.all(
-        changedLessons.map((lesson) =>
-          lessonsService.update(lesson.id, {
-            id: lesson.id,
-            date: lesson.date,
-            hours: lesson.hours,
-            order: lesson.order,
-            type: lesson.type,
-            teacherId: lesson.teacherId,
-            subjectId: lesson.subjectId,
-            scheduleId: lesson.scheduleId,
-          }),
-        ),
-      )
-
       const updated = await schedulesService.getById(currentSchedule.id)
       setCurrentSchedule(updated)
+      const updatedLessons = updated.lessons || []
+      setLessonsState(updatedLessons)
+      setInitialLessons(updatedLessons)
       resetForm(updated)
-      setInitialLessons(lessons)
       setIsEditing(false)
       toast.success('Розклад оновлено')
       onUpdate?.()
@@ -209,6 +189,6 @@ export const useScheduleDetails = ({ open, schedule, onUpdate }: Props) => {
     cancelEditing,
     saveEditing,
     updateHeaderField,
-    updateLessonHours,
+    setLessons,
   }
 }

@@ -1,8 +1,10 @@
 import type { LessonDto } from './lesson'
+import type { StudyProgramSubjectDto } from './studyProgram'
 
 export type ScheduleStudyProgramRefDto = {
   id: number
   name: string
+  subjects?: StudyProgramSubjectDto[]
   createdAt?: string
   updatedAt?: string
 }
@@ -34,6 +36,7 @@ export type ScheduleDto = {
   groupName: string
   studyProgramId: number
   studyProgramName: string
+  subjects?: StudyProgramSubjectDto[]
   status?: string
   lessons?: LessonDto[]
   createdAt?: string

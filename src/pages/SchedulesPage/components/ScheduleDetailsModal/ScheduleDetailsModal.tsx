@@ -29,7 +29,7 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
     startEditing,
     cancelEditing,
     saveEditing,
-    updateLessonHours,
+    setLessons,
     editForm,
     updateHeaderField,
   } = useScheduleDetails({
@@ -42,7 +42,7 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
     <ModalLayout
       open={open}
       onClose={onClose}
-      panelClassName="max-w-[95vw] max-h-[90vh] flex flex-col overflow-hidden !py-6"
+      panelClassName="max-w-[80vw] max-h-[90vh] flex flex-col overflow-hidden !py-6"
     >
       <div className="flex min-h-0 flex-1 flex-col gap-6">
         <header className="flex shrink-0 items-start justify-between border-b border-border pb-4">
@@ -109,7 +109,7 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-auto">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {loading ? (
             <p className="py-20 text-center text-text-secondary">Завантаження...</p>
           ) : (
@@ -118,7 +118,7 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
                 lessons={lessons}
                 schedule={currentSchedule}
                 isEditing={isEditing}
-                onUpdateLessonHours={updateLessonHours}
+                onLessonsChange={setLessons}
               />
             )
           )}
@@ -126,6 +126,12 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
 
         <footer className="flex shrink-0 flex-col gap-4 pt-2">
           {validationError && <FormErrorMessage message={validationError} />}
+
+          {isEditing && (
+            <p className="text-sm text-text-secondary">
+              Натисніть на клітинку дня, щоб редагувати типи навчань, викладачів та години.
+            </p>
+          )}
 
           <div className="flex justify-end">
             <Button type="button" onClick={onClose} variant="primary" className="px-8">

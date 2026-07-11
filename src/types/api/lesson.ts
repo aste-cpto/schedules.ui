@@ -1,4 +1,4 @@
-export type LessonType = number
+export type LessonType = 'Pair' | 'Training' | 'Practice' | 'Consultation' | 'Qualification'
 
 export type LessonTeacherDto = {
   id: number
@@ -38,4 +38,10 @@ export type UpdateLessonDto = {
   teacherId: number
   subjectId: number
   scheduleId: number
+}
+
+export type LessonCellContext = {
+  subjectId: number
+  subjectName: string
+  date: string
 }

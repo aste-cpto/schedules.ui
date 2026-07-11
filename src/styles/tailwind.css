@@ -292,4 +292,20 @@
     background: var(--color-toast-error-bg);
     color: var(--color-toast-error-text);
   }
+
+  .lesson-cell-recently-edited {
+    @apply border-2 border-dashed border-accent-indigo bg-accent-indigo/10 ring-2 ring-accent-indigo/20;
+    animation: lesson-cell-highlight 0.7s ease-in-out 4;
+  }
+}
+
+@keyframes lesson-cell-highlight {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
 }

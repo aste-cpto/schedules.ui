@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useClickOutside } from '~/hooks/useClickOutside'
 import { cn } from '~/lib/cn'
 
@@ -7,6 +8,9 @@ export type SelectOption = {
   value: string
   label: string
 }
+
+const MENU_GAP = 10
+const MENU_Z_INDEX = 'z-[120]'
 
 type SelectProps = {
   label?: string
@@ -29,10 +33,24 @@ export const Select = ({
 }: SelectProps) => {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLUListElement>(null)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 })
   const selectId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
   const selectedOption = options.find((option) => option.value === value)
 
-  useClickOutside(containerRef, () => setOpen(false), open)
+  useClickOutside([containerRef, triggerRef, menuRef], () => setOpen(false), open)
+
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return
+
+    const rect = triggerRef.current.getBoundingClientRect()
+    setMenuPosition({
+      top: rect.bottom + MENU_GAP,
+      left: rect.left,
+      width: rect.width,
+    })
+  }, [open, value, selectedOption?.label])
 
   return (
     <div className={cn('field-group', wrapperClassName, disabled && 'opacity-60 cursor-not-allowed')}>
@@ -42,8 +60,9 @@ export const Select = ({
         </label>
       )}
 
-      <div ref={containerRef} className="relative w-full">
+      <div ref={containerRef} className="relative w-full min-w-0">
         <button
+          ref={triggerRef}
           type="button"
           id={selectId}
           aria-haspopup="listbox"
@@ -51,9 +70,13 @@ export const Select = ({
           aria-labelledby={label ? `${selectId}-label` : undefined}
           onClick={() => !disabled && setOpen((prev) => !prev)}
           disabled={disabled}
-          className={cn("field-select flex w-full items-center justify-between text-left", disabled && "cursor-not-allowed")}
+          className={cn(
+            'field-select flex h-[42px] w-full min-w-0 items-center justify-between gap-2 overflow-hidden text-left',
+            open && 'border-border-strong ring-2 ring-accent-indigo/15',
+            disabled && 'cursor-not-allowed',
+          )}
         >
-          <span>{selectedOption?.label ?? value}</span>
+          <span className="min-w-0 flex-1 truncate">{selectedOption?.label ?? value}</span>
           <ChevronDown
             className={cn(
               'h-4 w-4 shrink-0 text-text-muted transition-transform',
@@ -63,35 +86,47 @@ export const Select = ({
           />
         </button>
 
-        {open && (
-          <ul
-            role="listbox"
-            aria-labelledby={label ? `${selectId}-label` : undefined}
-            className="absolute top-[calc(100%+0.625rem)] z-50 w-full overflow-hidden rounded-md border border-border bg-bg-surface py-1 shadow-md"
-          >
-            {options.map((option) => {
-              const isSelected = option.value === value
+        {open &&
+          createPortal(
+            <ul
+              ref={menuRef}
+              role="listbox"
+              aria-labelledby={label ? `${selectId}-label` : undefined}
+              style={{
+                top: menuPosition.top,
+                left: menuPosition.left,
+                width: menuPosition.width,
+              }}
+              className={cn(
+                'fixed max-h-60 overflow-hidden overflow-y-auto rounded-md border border-border bg-bg-surface py-1 shadow-lg',
+                MENU_Z_INDEX,
+              )}
+            >
+              {options.map((option) => {
+                const isSelected = option.value === value
 
-              return (
-                <li key={option.value} role="option" aria-selected={isSelected}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChange(option.value)
-                      setOpen(false)
-                    }}
-                    className={cn(
-                      'flex w-full px-3 py-2 text-left text-sm text-text transition-colors hover:bg-bg-muted',
-                      isSelected && 'font-semibold',
-                    )}
-                  >
-                    {option.label}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        )}
+                return (
+                  <li key={option.value} role="option" aria-selected={isSelected}>
+                    <button
+                      type="button"
+                      onMouseDown={(event) => {
+                        event.preventDefault()
+                        onChange(option.value)
+                        setOpen(false)
+                      }}
+                      className={cn(
+                        'flex w-full px-3 py-2 text-left text-sm text-text transition-colors hover:bg-bg-muted',
+                        isSelected && 'font-semibold',
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>,
+            document.body,
+          )}
       </div>
     </div>
   )

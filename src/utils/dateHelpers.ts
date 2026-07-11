@@ -1,12 +1,13 @@
 import { eachDayOfInterval, format, isValid, isWeekend, parseISO } from 'date-fns'
 import { uk } from 'date-fns/locale'
-import { formatDateToIso, parseDisplayDate } from '~/lib/dateUtils'
+import { formatDateToIso, parseDisplayDate, toIsoDateString } from '~/lib/dateUtils'
 
 export function parseScheduleDate(dateStr: string): Date | null {
   const fromDisplay = parseDisplayDate(dateStr)
   if (fromDisplay) return fromDisplay
 
-  const fromIso = parseISO(dateStr)
+  const calendarDate = toIsoDateString(dateStr)
+  const fromIso = parseISO(calendarDate)
   return isValid(fromIso) ? fromIso : null
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type RefObject } from 'react'
 import { useClickOutside } from '~/hooks/useClickOutside'
 import type { ComboboxOption } from '../types'
 
@@ -8,9 +8,19 @@ type UseComboboxOptions = {
   onChange: (value: string) => void
   id?: string
   label?: string
+  triggerRef: RefObject<HTMLDivElement | null>
+  menuRef: RefObject<HTMLUListElement | null>
 }
 
-export const useCombobox = ({ options, value, onChange, id, label }: UseComboboxOptions) => {
+export const useCombobox = ({
+  options,
+  value,
+  onChange,
+  id,
+  label,
+  triggerRef,
+  menuRef,
+}: UseComboboxOptions) => {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState(
     () => options.find((option) => option.value === value)?.label ?? value,
@@ -23,18 +33,16 @@ export const useCombobox = ({ options, value, onChange, id, label }: UseCombobox
     [options],
   )
 
+  const closeDropdown = useCallback(() => {
+    setOpen(false)
+    setInputValue(getLabelForValue(value))
+  }, [getLabelForValue, value])
+
   useEffect(() => {
     setInputValue(getLabelForValue(value))
   }, [value, getLabelForValue])
 
-  useClickOutside(
-    containerRef,
-    () => {
-      setOpen(false)
-      setInputValue(getLabelForValue(value))
-    },
-    open,
-  )
+  useClickOutside([containerRef, triggerRef, menuRef], closeDropdown, open)
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
@@ -62,7 +70,7 @@ export const useCombobox = ({ options, value, onChange, id, label }: UseCombobox
   const toggleDropdown = () => {
     setOpen((prev) => {
       if (!prev) {
-        setInputValue(value)
+        setInputValue(getLabelForValue(value))
       }
       return !prev
     })

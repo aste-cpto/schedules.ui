@@ -33,6 +33,7 @@ export function normalizeScheduleDetails(dto: ScheduleDetailsApiDto): ScheduleDt
     groupName: dto.groupName,
     studyProgramId: dto.studyProgram.id,
     studyProgramName: dto.studyProgram.name,
+    subjects: dto.studyProgram.subjects ?? [],
     lessons: dto.lessons,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,

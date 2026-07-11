@@ -1,6 +1,9 @@
-import { ChevronDown } from 'lucide-react'
+import { useRef } from 'react'
 import { cn } from '~/lib/cn'
+import { ComboboxMenu } from './components/ComboboxMenu'
+import { ComboboxTrigger } from './components/ComboboxTrigger'
 import { useCombobox } from './hooks/useCombobox'
+import { useComboboxMenuPosition } from './hooks/useComboboxMenuPosition'
 import type { ComboboxOption } from './types'
 
 export type { ComboboxOption } from './types'
@@ -24,6 +27,9 @@ export const Combobox = ({
   id,
   placeholder,
 }: ComboboxProps) => {
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLUListElement>(null)
+
   const {
     open,
     containerRef,
@@ -33,97 +39,49 @@ export const Combobox = ({
     inputValue,
     displayValue,
     actions,
-  } = useCombobox({ options, value, onChange, id, label })
+  } = useCombobox({
+    options,
+    value,
+    onChange,
+    id,
+    label,
+    triggerRef,
+    menuRef,
+  })
+
+  const menuPosition = useComboboxMenuPosition(open, triggerRef, displayValue)
 
   return (
-    <div className={cn('field-group', wrapperClassName)}>
+    <div ref={containerRef} className={cn('field-group', wrapperClassName)}>
       {label && (
         <label htmlFor={selectId} className="field-label">
           {label}
         </label>
       )}
 
-      <div ref={containerRef} className="relative w-full">
-        <div
-          className={cn(
-            'field-select flex w-full cursor-text items-center justify-between text-left focus-within:border-primary focus-within:ring-2 focus-within:ring-primary',
-            open && 'border-primary ring-2 ring-primary',
-          )}
-          onClick={actions.openDropdown}
-        >
-          <input
-            id={selectId}
-            type="text"
-            value={displayValue}
-            onChange={actions.handleInputChange}
-            placeholder={placeholder}
-            className="w-full bg-transparent outline-none placeholder:text-text-muted"
-            autoComplete="off"
-            role="combobox"
-            aria-expanded={open}
-            aria-autocomplete="list"
-          />
-          <ChevronDown
-            className={cn(
-              'h-4 w-4 shrink-0 cursor-pointer text-text-muted transition-transform',
-              open && 'rotate-180',
-            )}
-            onClick={(event) => {
-              event.stopPropagation()
-              actions.toggleDropdown()
-            }}
-            aria-hidden
-          />
-        </div>
+      <div className="relative w-full min-w-0">
+        <ComboboxTrigger
+          triggerRef={triggerRef}
+          selectId={selectId}
+          open={open}
+          displayValue={displayValue}
+          placeholder={placeholder}
+          onInputChange={actions.handleInputChange}
+          onOpen={actions.openDropdown}
+          onToggle={actions.toggleDropdown}
+        />
 
         {open && (
-          <ul
-            role="listbox"
-            className="absolute top-[calc(100%+0.625rem)] z-50 max-h-60 w-full overflow-hidden overflow-y-auto rounded-md border border-border bg-bg-surface py-1 shadow-md"
-          >
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => {
-                const isSelected = option.value === value
-
-                return (
-                  <li key={option.value} role="option" aria-selected={isSelected}>
-                    <button
-                      type="button"
-                      onMouseDown={(event) => {
-                        event.preventDefault()
-                        actions.selectOption(option.value, option.label)
-                      }}
-                      className={cn(
-                        'flex w-full px-3 py-2 text-left text-sm text-text transition-colors hover:bg-bg-muted',
-                        isSelected && 'font-semibold',
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  </li>
-                )
-              })
-            ) : null}
-
-            {!exactMatch && inputValue.trim() !== '' && (
-              <li role="option" aria-selected={false}>
-                <button
-                  type="button"
-                  onMouseDown={(event) => {
-                    event.preventDefault()
-                    actions.createOption(inputValue)
-                  }}
-                  className="flex w-full px-3 py-2 text-left text-sm font-medium text-primary transition-colors hover:bg-bg-muted"
-                >
-                  Додати новий "{inputValue.trim()}"
-                </button>
-              </li>
-            )}
-
-            {filteredOptions.length === 0 && (!inputValue || inputValue.trim() === '') && (
-              <li className="px-3 py-2 text-sm text-text-muted">Немає результатів</li>
-            )}
-          </ul>
+          <ComboboxMenu
+            menuRef={menuRef}
+            position={menuPosition}
+            value={value}
+            inputValue={inputValue}
+            filteredOptions={filteredOptions}
+            exactMatch={exactMatch}
+            onSelectOption={actions.selectOption}
+            onCreateOption={actions.createOption}
+          />
         )}
       </div>
     </div>

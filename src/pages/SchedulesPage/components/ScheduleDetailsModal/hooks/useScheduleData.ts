@@ -1,9 +1,32 @@
 import { useMemo } from 'react'
 import type { LessonDto } from '~/types/api/lesson'
-import { getLessonDateKey } from '~/lib/lessonDateUtils'
-import type { TableHeaderColumn } from '~/ui/TableHeader'
+import { getLessonDateKey, toApiNumber } from '~/lib/lessonDateUtils'
 import type { ScheduleDto } from '~/types/api/schedule'
-import { formatDateDisplay, getBusinessDatesInRange } from '~/utils/dateHelpers'
+import type { StudyProgramSubjectDto } from '~/types/api/studyProgram'
+import { getBusinessDatesInRange } from '~/utils/dateHelpers'
+
+export type ScheduleSubjectRow = StudyProgramSubjectDto
+
+function buildSubjects(schedule: ScheduleDto, lessons: LessonDto[]): ScheduleSubjectRow[] {
+  if (schedule.subjects?.length) {
+    return [...schedule.subjects].sort((a, b) => a.order - b.order)
+  }
+
+  const subjectIds = Array.from(new Set(lessons.map((lesson) => lesson.subjectId))).sort(
+    (a, b) => a - b,
+  )
+
+  return subjectIds.map((subjectId, index) => {
+    const subjectLessons = lessons.filter((lesson) => lesson.subjectId === subjectId)
+
+    return {
+      id: subjectId,
+      name: `Предмет №${subjectId}`,
+      hours: subjectLessons.reduce((sum, lesson) => sum + toApiNumber(lesson.hours), 0),
+      order: index + 1,
+    }
+  })
+}
 
 export const useScheduleData = (lessons: LessonDto[], schedule: ScheduleDto) => {
   const dateColumns = useMemo(
@@ -11,51 +34,31 @@ export const useScheduleData = (lessons: LessonDto[], schedule: ScheduleDto) => 
     [schedule.startDate, schedule.endDate],
   )
 
-  const { groupedData, subjectIds, totalHours, dailyTotals } = useMemo(() => {
+  const { groupedData, subjects, totalHours, dailyTotals } = useMemo(() => {
     const map: Record<number, Record<string, LessonDto[]>> = {}
     const daily: Record<string, number> = {}
-    let total = 0
 
     lessons.forEach((lesson) => {
-      total += lesson.hours
-
       const dateKey = getLessonDateKey(lesson.date)
+      const hours = toApiNumber(lesson.hours)
 
       if (!map[lesson.subjectId]) map[lesson.subjectId] = {}
       if (!map[lesson.subjectId][dateKey]) map[lesson.subjectId][dateKey] = []
       map[lesson.subjectId][dateKey].push(lesson)
 
-      daily[dateKey] = (daily[dateKey] || 0) + lesson.hours
+      daily[dateKey] = (daily[dateKey] || 0) + hours
     })
 
-    const ids = Array.from(new Set(lessons.map((lesson) => lesson.subjectId))).sort((a, b) => a - b)
+    const subjectRows = buildSubjects(schedule, lessons)
+    const plannedTotalHours = subjectRows.reduce((sum, subject) => sum + toApiNumber(subject.hours), 0)
 
     return {
       groupedData: map,
-      subjectIds: ids,
-      totalHours: total,
+      subjects: subjectRows,
+      totalHours: plannedTotalHours,
       dailyTotals: daily,
     }
-  }, [lessons])
+  }, [lessons, schedule])
 
-  const columns: TableHeaderColumn[] = useMemo(
-    () => [
-      { key: 'index', label: '№', className: 'w-14 text-center border-r border-border/50' },
-      {
-        key: 'subject',
-        label: 'Предмети',
-        className: 'w-[20vw] min-w-[200px] text-left border-r border-border/50',
-      },
-      { key: 'hours', label: 'К-ть год.', className: 'w-24 text-center border-r border-border/50' },
-      ...dateColumns.map((date) => ({
-        key: `date-${date}`,
-        label: formatDateDisplay(date),
-        className: 'min-w-[140px] text-center',
-      })),
-      { key: 'teachers', label: 'Викладачі (всього)', className: 'min-w-[180px] text-left' },
-    ],
-    [dateColumns],
-  )
-
-  return { dateColumns, columns, groupedData, subjectIds, totalHours, dailyTotals }
+  return { dateColumns, groupedData, subjects, totalHours, dailyTotals }
 }

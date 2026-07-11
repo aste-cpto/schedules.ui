@@ -1,73 +1,59 @@
 import { cn } from '~/lib/cn'
 import type { LessonDto } from '~/types/api/lesson'
-import { groupLessonsByTeacher } from '~/pages/SchedulesPage/components/ScheduleDetailsModal/utils/groupLessonsByTeacher'
-
-type LessonHoursChipProps = {
-  lesson: LessonDto
-  isEditing: boolean
-  onUpdateLessonHours?: (lessonId: number, hours: number) => void
-}
-
-export const LessonHoursChip = ({
-  lesson,
-  isEditing,
-  onUpdateLessonHours,
-}: LessonHoursChipProps) => {
-  if (isEditing) {
-    return (
-      <label className="inline-flex items-center gap-0.5 rounded border border-accent-indigo/30 bg-white px-1.5 py-0.5 text-[11px] text-accent-indigo shadow-sm">
-        <span className="tabular-nums font-medium">{lesson.order}п/</span>
-        <input
-          type="number"
-          min={1}
-          value={lesson.hours}
-          onChange={(event) => onUpdateLessonHours?.(lesson.id, Number(event.target.value))}
-          className="w-7 border-0 bg-transparent p-0 text-center text-[11px] font-bold tabular-nums outline-none focus:ring-0"
-          aria-label={`Години для заняття ${lesson.order}, викладач ${lesson.teacher.displayName}`}
-        />
-        <span>год</span>
-      </label>
-    )
-  }
-
-  return (
-    <span className="inline-block rounded bg-bg-muted/60 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-text-secondary">
-      {lesson.order}п/{lesson.hours}год
-    </span>
-  )
-}
+import { getCellDisplayLines } from '../utils/formatLessonDisplay'
 
 type ScheduleLessonCellProps = {
   lessons: LessonDto[]
   isEditing: boolean
-  onUpdateLessonHours?: (lessonId: number, hours: number) => void
+  isRecentlyEdited?: boolean
+  onClick?: () => void
 }
 
 export const ScheduleLessonCell = ({
   lessons,
   isEditing,
-  onUpdateLessonHours,
+  isRecentlyEdited = false,
+  onClick,
 }: ScheduleLessonCellProps) => {
-  if (lessons.length === 0) return null
-
-  const teacherGroups = groupLessonsByTeacher(lessons)
+  const isClickable = isEditing && Boolean(onClick)
+  const displayLines = getCellDisplayLines(lessons)
 
   return (
-    <div className={cn('flex flex-col', teacherGroups.length > 1 ? 'gap-3' : 'gap-1')}>
-      {teacherGroups.map((group) => (
-        <div key={group.teacherId} className="flex flex-col gap-1">
-          <div className="flex flex-col gap-1">
-            {group.lessons.map((lesson) => (
-              <LessonHoursChip
-                key={lesson.id}
-                lesson={lesson}
-                isEditing={isEditing}
-                onUpdateLessonHours={onUpdateLessonHours}
-              />
-            ))}
-          </div>
+    <button
+      type="button"
+      onClick={isClickable ? onClick : undefined}
+      disabled={!isClickable}
+      className={cn(
+        'group flex h-full min-h-full w-full flex-col rounded-md px-1 py-1.5 text-left transition-colors',
+        isRecentlyEdited && 'lesson-cell-recently-edited',
+        isClickable &&
+          'cursor-pointer hover:bg-accent-indigo/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-indigo/40',
+        !isClickable && 'cursor-default',
+        lessons.length === 0 && isClickable && !isRecentlyEdited && 'border border-dashed border-border/80',
+      )}
+    >
+      {displayLines.length === 0 ? (
+        <span
+          className={cn(
+            'flex flex-1 items-center justify-center text-center text-[11px] text-text-muted',
+            isClickable &&
+              'opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100',
+          )}
+        >
+          {isClickable ? 'Додати заняття' : '—'}
+        </span>
+      ) : (
+        <div className="flex flex-col gap-1">
+          {displayLines.map((line) => (
+            <span
+              key={line.key}
+              className="text-[11px] font-medium uppercase leading-snug text-text-secondary underline decoration-border/80 underline-offset-2"
+            >
+              {line.text}
+            </span>
+          ))}
         </div>
-      ))}
-    </div>
+      )}
+    </button>
   )
 }

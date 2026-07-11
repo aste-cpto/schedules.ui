@@ -1,4 +1,5 @@
 import type { LessonDto } from '~/types/api/lesson'
+import { compareLessonsForDisplay } from './formatLessonDisplay'
 
 export type TeacherLessonGroup = {
   teacherKey: string
@@ -33,7 +34,7 @@ export function groupLessonsByTeacher(lessons: LessonDto[]): TeacherLessonGroup[
 
   return Array.from(groups.values()).map((group) => ({
     ...group,
-    lessons: group.lessons.sort((a, b) => a.order - b.order),
+    lessons: group.lessons.sort(compareLessonsForDisplay),
   }))
 }
 
