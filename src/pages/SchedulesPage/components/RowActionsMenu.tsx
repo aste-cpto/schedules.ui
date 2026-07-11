@@ -1,6 +1,6 @@
+import { FloatingPortal } from '@floating-ui/react'
 import { EllipsisVertical } from 'lucide-react'
-import { useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState } from 'react'
 import { ConfirmModal } from '~/ui/ConfirmModal'
 import {
   getScheduleRowActions,
@@ -8,6 +8,8 @@ import {
   type ScheduleRowMenuItem,
 } from '~/pages/SchedulesPage/config/scheduleRowActions'
 import { useClickOutside } from '~/hooks/useClickOutside'
+import { useFloatingDropdown } from '~/hooks/useFloatingDropdown'
+import { mergeRefs } from '~/lib/mergeRefs'
 import { cn } from '~/lib/cn'
 import type { Schedule } from '~/types/schedule'
 
@@ -24,20 +26,18 @@ export const RowActionsMenu = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [position, setPosition] = useState({ top: 0, left: 0 })
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  useClickOutside([triggerRef, menuRef], () => setOpen(false), open)
+  const { refs, floatingStyles } = useFloatingDropdown({
+    open,
+    gap: MENU_GAP,
+    placement: 'bottom-end',
+    sameWidth: false,
+    width: MENU_WIDTH,
+  })
 
-  useLayoutEffect(() => {
-    if (!open || !triggerRef.current || !menuRef.current) return
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    setPosition({
-      top: triggerRect.bottom + MENU_GAP,
-      left: Math.max(MENU_GAP, triggerRect.right - MENU_WIDTH),
-    })
-  }, [open])
+  useClickOutside([triggerRef, menuRef], () => setOpen(false), open)
 
   const items = getScheduleRowActions(schedule, actions)
 
@@ -53,19 +53,19 @@ export const RowActionsMenu = ({
   return (
     <>
       <button
-        ref={triggerRef}
+        ref={mergeRefs(triggerRef, refs.setReference)}
         onClick={() => setOpen(!open)}
         className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-secondary hover:bg-bg-muted"
       >
         <EllipsisVertical className="h-5 w-5" />
       </button>
 
-      {open &&
-        createPortal(
+      {open && (
+        <FloatingPortal>
           <div
-            ref={menuRef}
-            style={{ top: position.top, left: position.left, width: MENU_WIDTH }}
-            className="fixed z-50 rounded-lg border border-border bg-bg-surface py-1 shadow-lg"
+            ref={mergeRefs(menuRef, refs.setFloating)}
+            style={{ ...floatingStyles, width: MENU_WIDTH }}
+            className="z-50 rounded-lg border border-border bg-bg-surface py-1 shadow-lg"
           >
             {items.map((item) => (
               <button
@@ -80,9 +80,9 @@ export const RowActionsMenu = ({
                 <span>{item.label}</span>
               </button>
             ))}
-          </div>,
-          document.body,
-        )}
+          </div>
+        </FloatingPortal>
+      )}
 
       <ConfirmModal
         open={deleteModalOpen}

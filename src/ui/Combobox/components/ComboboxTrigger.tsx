@@ -1,9 +1,11 @@
 import { ChevronDown } from 'lucide-react'
 import type { ChangeEvent, RefObject } from 'react'
+import { mergeRefs } from '~/lib/mergeRefs'
 import { cn } from '~/lib/cn'
 
 type ComboboxTriggerProps = {
   triggerRef: RefObject<HTMLDivElement | null>
+  setReference: (node: HTMLDivElement | null) => void
   selectId?: string
   open: boolean
   displayValue: string
@@ -15,6 +17,7 @@ type ComboboxTriggerProps = {
 
 export const ComboboxTrigger = ({
   triggerRef,
+  setReference,
   selectId,
   open,
   displayValue,
@@ -24,7 +27,7 @@ export const ComboboxTrigger = ({
   onToggle,
 }: ComboboxTriggerProps) => (
   <div
-    ref={triggerRef}
+    ref={mergeRefs(triggerRef, setReference)}
     className={cn(
       'field-select flex h-[42px] w-full min-w-0 cursor-text items-center justify-between gap-2 overflow-hidden text-left focus-within:border-border-strong focus-within:ring-2 focus-within:ring-text/5',
       open && 'border-border-strong ring-2 ring-text/5',

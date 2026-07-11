@@ -1,9 +1,10 @@
 import { useRef } from 'react'
+import { useFloatingDropdown } from '~/hooks/useFloatingDropdown'
 import { cn } from '~/lib/cn'
 import { ComboboxMenu } from './components/ComboboxMenu'
 import { ComboboxTrigger } from './components/ComboboxTrigger'
+import { COMBOBOX_MENU_GAP } from './constants'
 import { useCombobox } from './hooks/useCombobox'
-import { useComboboxMenuPosition } from './hooks/useComboboxMenuPosition'
 import type { ComboboxOption } from './types'
 
 export type { ComboboxOption } from './types'
@@ -52,7 +53,7 @@ export const Combobox = ({
     menuRef,
   })
 
-  const menuPosition = useComboboxMenuPosition(open, triggerRef, displayValue)
+  const { refs, floatingStyles } = useFloatingDropdown({ open, gap: COMBOBOX_MENU_GAP })
 
   return (
     <div ref={containerRef} className={cn('field-group', wrapperClassName)}>
@@ -65,6 +66,7 @@ export const Combobox = ({
       <div className="relative w-full min-w-0">
         <ComboboxTrigger
           triggerRef={triggerRef}
+          setReference={refs.setReference}
           selectId={selectId}
           open={open}
           displayValue={displayValue}
@@ -77,7 +79,8 @@ export const Combobox = ({
         {open && (
           <ComboboxMenu
             menuRef={menuRef}
-            position={menuPosition}
+            setFloating={refs.setFloating}
+            floatingStyles={floatingStyles}
             value={value}
             inputValue={inputValue}
             filteredOptions={filteredOptions}

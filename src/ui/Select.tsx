@@ -1,7 +1,9 @@
+import { FloatingPortal } from '@floating-ui/react'
 import { ChevronDown } from 'lucide-react'
-import { useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState } from 'react'
 import { useClickOutside } from '~/hooks/useClickOutside'
+import { useFloatingDropdown } from '~/hooks/useFloatingDropdown'
+import { mergeRefs } from '~/lib/mergeRefs'
 import { cn } from '~/lib/cn'
 
 export type SelectOption = {
@@ -35,22 +37,12 @@ export const Select = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 })
   const selectId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
   const selectedOption = options.find((option) => option.value === value)
 
+  const { refs, floatingStyles } = useFloatingDropdown({ open, gap: MENU_GAP })
+
   useClickOutside([containerRef, triggerRef, menuRef], () => setOpen(false), open)
-
-  useLayoutEffect(() => {
-    if (!open || !triggerRef.current) return
-
-    const rect = triggerRef.current.getBoundingClientRect()
-    setMenuPosition({
-      top: rect.bottom + MENU_GAP,
-      left: rect.left,
-      width: rect.width,
-    })
-  }, [open, value, selectedOption?.label])
 
   return (
     <div className={cn('field-group', wrapperClassName, disabled && 'opacity-60 cursor-not-allowed')}>
@@ -62,7 +54,7 @@ export const Select = ({
 
       <div ref={containerRef} className="relative w-full min-w-0">
         <button
-          ref={triggerRef}
+          ref={mergeRefs(triggerRef, refs.setReference)}
           type="button"
           id={selectId}
           aria-haspopup="listbox"
@@ -86,19 +78,15 @@ export const Select = ({
           />
         </button>
 
-        {open &&
-          createPortal(
+        {open && (
+          <FloatingPortal>
             <ul
-              ref={menuRef}
+              ref={mergeRefs(menuRef, refs.setFloating)}
               role="listbox"
               aria-labelledby={label ? `${selectId}-label` : undefined}
-              style={{
-                top: menuPosition.top,
-                left: menuPosition.left,
-                width: menuPosition.width,
-              }}
+              style={floatingStyles}
               className={cn(
-                'fixed max-h-60 overflow-hidden overflow-y-auto rounded-md border border-border bg-bg-surface py-1 shadow-lg',
+                'max-h-60 overflow-hidden overflow-y-auto rounded-md border border-border bg-bg-surface py-1 shadow-lg',
                 MENU_Z_INDEX,
               )}
             >
@@ -124,9 +112,9 @@ export const Select = ({
                   </li>
                 )
               })}
-            </ul>,
-            document.body,
-          )}
+            </ul>
+          </FloatingPortal>
+        )}
       </div>
     </div>
   )

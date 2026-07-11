@@ -1,8 +1,10 @@
+import { FloatingPortal } from '@floating-ui/react'
 import { EllipsisVertical } from 'lucide-react'
-import { useLayoutEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useRef, useState } from 'react'
 import { ConfirmModal } from '~/ui/ConfirmModal'
 import { useClickOutside } from '~/hooks/useClickOutside'
+import { useFloatingDropdown } from '~/hooks/useFloatingDropdown'
+import { mergeRefs } from '~/lib/mergeRefs'
 import { cn } from '~/lib/cn'
 import {
   getStudyProgramRowActions,
@@ -15,11 +17,6 @@ const MENU_ICON_CLASS = 'h-4 w-4 shrink-0 text-text-muted'
 const MENU_WIDTH = 256
 const MENU_GAP = 4
 
-type MenuPosition = {
-  top: number
-  left: number
-}
-
 type StudyProgramRowActionsMenuProps = {
   program: StudyProgramShortDto
   actions?: StudyProgramRowActionHandlers
@@ -31,28 +28,18 @@ export const StudyProgramRowActionsMenu = ({
 }: StudyProgramRowActionsMenuProps) => {
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [position, setPosition] = useState<MenuPosition>({ top: 0, left: 0 })
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  const { refs, floatingStyles } = useFloatingDropdown({
+    open,
+    gap: MENU_GAP,
+    placement: 'bottom-end',
+    sameWidth: false,
+    width: MENU_WIDTH,
+  })
+
   useClickOutside([triggerRef, menuRef], () => setOpen(false), open)
-
-  useLayoutEffect(() => {
-    if (!open || !triggerRef.current || !menuRef.current) return
-
-    const triggerRect = triggerRef.current.getBoundingClientRect()
-    const menuHeight = menuRef.current.offsetHeight
-    const spaceBelow = window.innerHeight - triggerRect.bottom
-    const openUpward = spaceBelow < menuHeight + MENU_GAP && triggerRect.top > menuHeight + MENU_GAP
-
-    setPosition({
-      top: openUpward ? triggerRect.top - menuHeight - MENU_GAP : triggerRect.bottom + MENU_GAP,
-      left: Math.min(
-        Math.max(MENU_GAP, triggerRect.right - MENU_WIDTH),
-        window.innerWidth - MENU_WIDTH - MENU_GAP,
-      ),
-    })
-  }, [open])
 
   const items = getStudyProgramRowActions(program, actions)
 
@@ -69,7 +56,7 @@ export const StudyProgramRowActionsMenu = ({
   return (
     <>
       <button
-        ref={triggerRef}
+        ref={mergeRefs(triggerRef, refs.setReference)}
         type="button"
         aria-label="Дії"
         aria-expanded={open}
@@ -79,12 +66,12 @@ export const StudyProgramRowActionsMenu = ({
         <EllipsisVertical className="h-5 w-5" />
       </button>
 
-      {open &&
-        createPortal(
+      {open && (
+        <FloatingPortal>
           <div
-            ref={menuRef}
-            style={{ top: position.top, left: position.left, width: MENU_WIDTH }}
-            className="fixed z-50 overflow-hidden rounded-lg border border-border bg-bg-surface py-1 shadow-lg"
+            ref={mergeRefs(menuRef, refs.setFloating)}
+            style={{ ...floatingStyles, width: MENU_WIDTH }}
+            className="z-50 overflow-hidden rounded-lg border border-border bg-bg-surface py-1 shadow-lg"
           >
             {items.map((item) => {
               const Icon = item.icon
@@ -105,9 +92,9 @@ export const StudyProgramRowActionsMenu = ({
                 </button>
               )
             })}
-          </div>,
-          document.body,
-        )}
+          </div>
+        </FloatingPortal>
+      )}
 
       <ConfirmModal
         open={deleteModalOpen}
