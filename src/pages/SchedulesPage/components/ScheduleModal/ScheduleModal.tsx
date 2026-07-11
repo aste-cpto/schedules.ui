@@ -3,6 +3,7 @@ import { useRegisterModalOpen } from '~/contexts/ModalGuardContext'
 import { FormErrorMessage } from '~/ui/FormErrorMessage'
 import { Input } from '~/ui/Input'
 import { DatePicker } from '~/ui/DatePicker'
+import { Combobox } from '~/ui/Combobox/Combobox'
 import { Select } from '~/ui/Select'
 import { parseIsoDate } from '~/lib/dateUtils'
 import { SCHEDULE_STATUS_OPTIONS } from '~/pages/SchedulesPage/config/scheduleStatus'
@@ -48,11 +49,12 @@ export const ScheduleModal = ({ open, onClose, onSuccess }: ScheduleModalProps) 
                 wrapperClassName="sm:col-span-2"
                 required
               />
-              <Select
+              <Combobox
                 label="Навчальна програма"
                 options={state.studyProgramOptions}
                 value={state.studyProgramId}
                 onChange={actions.setStudyProgramId}
+                placeholder="Оберіть навчальну програму..."
                 wrapperClassName="sm:col-span-2"
               />
               <DatePicker

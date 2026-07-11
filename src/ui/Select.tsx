@@ -72,7 +72,7 @@ export const Select = ({
           disabled={disabled}
           className={cn(
             'field-select flex h-[42px] w-full min-w-0 items-center justify-between gap-2 overflow-hidden text-left',
-            open && 'border-border-strong ring-2 ring-accent-indigo/15',
+            open && 'border-border-strong ring-2 ring-text/5',
             disabled && 'cursor-not-allowed',
           )}
         >

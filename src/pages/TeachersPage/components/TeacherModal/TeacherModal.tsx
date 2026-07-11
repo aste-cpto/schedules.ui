@@ -97,6 +97,7 @@ export const TeacherModal = ({
                   options={state.yearOptions}
                   onChange={(value) => actions.handleYearChange(value)}
                   placeholder="Введіть або оберіть рік..."
+                  allowCreate
                 />
               )}
               <Input

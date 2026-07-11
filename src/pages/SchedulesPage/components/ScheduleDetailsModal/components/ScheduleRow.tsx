@@ -10,13 +10,13 @@ import {
   getStickyLeftStyle,
   getStickyRightStyle,
 } from '../config/scheduleTableLayout'
+import {
+  getRowCellBackgroundClass,
+  getRowCellHoverClass,
+  getStickyCellBackgroundClass,
+  getStickyCellHoverClass,
+} from '../utils/scheduleRowStyles'
 import { ScheduleLessonCell } from './ScheduleLessonCell'
-
-function getRowBackgroundClass(index: number, isComplete: boolean) {
-  if (isComplete) return 'bg-emerald-500/10'
-
-  return index % 2 === 0 ? 'bg-bg-surface' : 'bg-bg-muted/30'
-}
 
 export const ScheduleRow = memo(
   ({
@@ -47,21 +47,19 @@ export const ScheduleRow = memo(
     const allLessonsInRow = useMemo(() => Object.values(lessonsByDate).flat(), [lessonsByDate])
     const teacherNames = useMemo(() => getUniqueTeacherNames(allLessonsInRow), [allLessonsInRow])
     const isComplete = !isOverLimit && remainingHours === 0 && plannedHours > 0
-    const rowBackgroundClass = getRowBackgroundClass(index, isComplete)
+    const rowBackgroundClass = getRowCellBackgroundClass(index, isComplete)
+    const stickyBackgroundClass = getStickyCellBackgroundClass(index, isComplete)
+    const rowHoverClass = getRowCellHoverClass(isComplete)
+    const stickyHoverClass = getStickyCellHoverClass(isComplete)
 
     return (
-      <tr
-        className={cn(
-          'border-b border-border transition-colors last:border-b-0',
-          isComplete ? 'hover:bg-emerald-500/15' : 'hover:bg-bg-muted/10',
-          rowBackgroundClass,
-        )}
-      >
+      <tr className="border-b border-border transition-colors last:border-b-0">
         <td
           style={getStickyLeftStyle('index')}
           className={cn(
             'sticky z-10 px-4 py-3 text-center tabular-nums text-text-secondary border-r border-border/50',
-            rowBackgroundClass,
+            stickyBackgroundClass,
+            stickyHoverClass,
           )}
         >
           {index + 1}
@@ -71,7 +69,8 @@ export const ScheduleRow = memo(
           className={cn(
             'sticky z-10 whitespace-normal break-words px-3 py-3 font-medium leading-snug border-r border-border/50 align-top',
             isComplete ? 'text-emerald-800' : 'text-text',
-            rowBackgroundClass,
+            stickyBackgroundClass,
+            stickyHoverClass,
           )}
         >
           {subjectName}
@@ -80,7 +79,8 @@ export const ScheduleRow = memo(
           style={getStickyLeftStyle('hours')}
           className={cn(
             'sticky z-10 px-2 py-3 text-center border-r border-border/50 shadow-[4px_0_6px_-4px_rgba(0,0,0,0.08)] align-top',
-            rowBackgroundClass,
+            stickyBackgroundClass,
+            stickyHoverClass,
           )}
         >
           <div className="font-semibold tabular-nums text-text">{toApiNumber(plannedHours)}</div>
@@ -101,6 +101,7 @@ export const ScheduleRow = memo(
             className={cn(
               'h-px border-r border-border/30 p-1 last:border-r-0',
               rowBackgroundClass,
+              rowHoverClass,
             )}
           >
             <ScheduleLessonCell
@@ -125,7 +126,8 @@ export const ScheduleRow = memo(
           style={getStickyRightStyle()}
           className={cn(
             'sticky z-10 whitespace-normal break-words px-3 py-3 text-xs font-medium leading-snug text-text-secondary shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.08)] align-top',
-            rowBackgroundClass,
+            stickyBackgroundClass,
+            stickyHoverClass,
           )}
         >
           <div className="flex flex-col gap-1">

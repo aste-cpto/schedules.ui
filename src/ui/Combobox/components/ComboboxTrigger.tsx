@@ -27,7 +27,7 @@ export const ComboboxTrigger = ({
     ref={triggerRef}
     className={cn(
       'field-select flex h-[42px] w-full min-w-0 cursor-text items-center justify-between gap-2 overflow-hidden text-left focus-within:border-border-strong focus-within:ring-2 focus-within:ring-text/5',
-      open && 'border-border-strong ring-2 ring-accent-indigo/15',
+      open && 'border-border-strong ring-2 ring-text/5',
     )}
     onClick={onOpen}
   >

@@ -29,7 +29,10 @@ export const ModalLayout = ({
 
   const classes = panelClassName?.split(/\s+/).filter(Boolean) ?? []
   const maxWidthClass = classes.find((c) => c.startsWith('max-w-')) || 'max-w-md'
-  const otherPanelClasses = classes.filter((c) => !c.startsWith('max-w-')).join(' ')
+  const fitsContent = classes.includes('w-fit')
+  const otherPanelClasses = classes
+    .filter((c) => !c.startsWith('max-w-') && c !== 'w-fit' && c !== 'w-full')
+    .join(' ')
   const showScrollbars = classes.includes('scrollbar-visible')
   const usesInternalScroll = classes.some(
     (c) =>
@@ -49,7 +52,11 @@ export const ModalLayout = ({
       role="presentation"
     >
       <div
-        className={cn('relative w-full mx-auto', maxWidthClass)}
+        className={cn(
+          'relative mx-auto',
+          fitsContent ? 'w-fit max-w-full' : 'w-full',
+          maxWidthClass,
+        )}
         onClick={(event) => event.stopPropagation()}
       >
         {showCloseButton && (
@@ -69,7 +76,9 @@ export const ModalLayout = ({
           aria-labelledby={labelledBy}
           aria-describedby={describedBy}
           className={cn(
-            'rounded-xl border border-border bg-bg-surface px-6 py-8 shadow-lg max-h-[90vh] w-full',
+            'rounded-xl border border-border bg-bg-surface px-6 py-8 shadow-lg max-h-[90vh]',
+            fitsContent ? 'w-fit max-w-full' : 'w-full',
+            fitsContent && otherPanelClasses.includes('flex') && 'items-start',
             usesInternalScroll ? 'min-h-0 overflow-hidden' : 'overflow-y-auto',
             !showScrollbars && 'scrollbar-hidden',
             otherPanelClasses.includes('flex') && 'min-h-0',

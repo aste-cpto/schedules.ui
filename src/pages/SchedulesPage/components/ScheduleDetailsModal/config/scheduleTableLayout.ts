@@ -47,6 +47,12 @@ export function getDateColumnStyle() {
   }
 }
 
+export function getScheduleTableWidth(dateColumnCount: number) {
+  const { index, subject, hours, date, teachers } = SCHEDULE_TABLE_COLUMNS
+
+  return index.width + subject.width + hours.width + dateColumnCount * date.width + teachers.width
+}
+
 export function getStickyLeftSpanStyle(columns: Array<'index' | 'subject'>) {
   const width = columns.reduce((sum, column) => sum + SCHEDULE_TABLE_COLUMNS[column].width, 0)
 

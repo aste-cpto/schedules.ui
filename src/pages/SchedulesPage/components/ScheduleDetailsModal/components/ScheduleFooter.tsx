@@ -7,7 +7,9 @@ import {
   getStickyRightStyle,
 } from '../config/scheduleTableLayout'
 
-const STICKY_FOOTER_CLASS = 'sticky z-20 bg-bg-muted/20'
+import { SCHEDULE_FOOTER_ROW_BG, SCHEDULE_FOOTER_STICKY_BG } from '../utils/scheduleRowStyles'
+
+const STICKY_FOOTER_CLASS = `sticky z-20 ${SCHEDULE_FOOTER_STICKY_BG}`
 
 export const ScheduleFooter = ({
   visibleDateColumns,
@@ -19,7 +21,7 @@ export const ScheduleFooter = ({
   totalHours: number
 }) => (
   <tfoot>
-    <tr className="border-t border-border bg-bg-muted/20 font-semibold">
+    <tr className={cn('border-t border-border font-semibold', SCHEDULE_FOOTER_ROW_BG)}>
       <td
         colSpan={2}
         style={getStickyLeftSpanStyle(['index', 'subject'])}

@@ -1,3 +1,5 @@
+import { cn } from '~/lib/cn'
+import { useEffect, useState } from 'react'
 import { Pencil, Save, X, Loader2 } from 'lucide-react'
 import { Button } from '~/ui/Button'
 import { FormErrorMessage } from '~/ui/FormErrorMessage'
@@ -38,16 +40,33 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
     onUpdate,
   })
 
+  const [tableWidth, setTableWidth] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!open) {
+      setTableWidth(null)
+    }
+  }, [open])
+
+  const contentWidth = tableWidth ?? undefined
+
   return (
     <ModalLayout
       open={open}
       onClose={onClose}
-      panelClassName="max-w-[80vw] max-h-[90vh] flex flex-col overflow-hidden !py-6"
+      panelClassName="w-fit max-w-[80vw] max-h-[90vh] flex flex-col overflow-hidden !py-6"
     >
-      <div className="flex min-h-0 flex-1 flex-col gap-6">
+      <div
+        className={cn(
+          'flex min-h-0 min-w-0 flex-1 flex-col gap-6 overflow-x-hidden',
+          !contentWidth && 'w-full max-w-2xl',
+          contentWidth != null && 'max-w-full',
+        )}
+        style={contentWidth ? { width: contentWidth, maxWidth: '100%' } : undefined}
+      >
         <header className="flex shrink-0 items-start justify-between border-b border-border pb-4">
-          <div className="flex-1 flex flex-col gap-4">
-            <h2 className="text-2xl font-bold leading-tight text-text">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            <h2 className="break-words text-2xl font-bold leading-tight text-text">
               {currentSchedule?.studyProgramName}
             </h2>
 
@@ -109,7 +128,7 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
           </div>
         </header>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-hidden">
           {loading ? (
             <p className="py-20 text-center text-text-secondary">Завантаження...</p>
           ) : (
@@ -119,6 +138,7 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
                 schedule={currentSchedule}
                 isEditing={isEditing}
                 onLessonsChange={setLessons}
+                onTableWidthChange={setTableWidth}
               />
             )
           )}

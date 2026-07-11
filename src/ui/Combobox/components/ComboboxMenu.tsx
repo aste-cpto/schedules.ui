@@ -11,6 +11,7 @@ type ComboboxMenuProps = {
   inputValue: string
   filteredOptions: ComboboxOption[]
   exactMatch?: ComboboxOption
+  allowCreate?: boolean
   onSelectOption: (optionValue: string, optionLabel: string) => void
   onCreateOption: (value: string) => void
 }
@@ -22,10 +23,16 @@ export const ComboboxMenu = ({
   inputValue,
   filteredOptions,
   exactMatch,
+  allowCreate = false,
   onSelectOption,
   onCreateOption,
-}: ComboboxMenuProps) =>
-  createPortal(
+}: ComboboxMenuProps) => {
+  const trimmedInput = inputValue.trim()
+  const showCreateOption = allowCreate && !exactMatch && trimmedInput !== ''
+  const showEmptyState =
+    filteredOptions.length === 0 && (trimmedInput === '' || !allowCreate)
+
+  return createPortal(
     <ul
       ref={menuRef}
       role="listbox"
@@ -63,7 +70,7 @@ export const ComboboxMenu = ({
           })
         : null}
 
-      {!exactMatch && inputValue.trim() !== '' && (
+      {showCreateOption && (
         <li role="option" aria-selected={false}>
           <button
             type="button"
@@ -73,14 +80,15 @@ export const ComboboxMenu = ({
             }}
             className="flex w-full px-3 py-2 text-left text-sm font-medium text-accent-indigo transition-colors hover:bg-bg-muted"
           >
-            Додати новий "{inputValue.trim()}"
+            Додати новий "{trimmedInput}"
           </button>
         </li>
       )}
 
-      {filteredOptions.length === 0 && (!inputValue || inputValue.trim() === '') && (
+      {showEmptyState && (
         <li className="px-3 py-2 text-sm text-text-muted">Немає результатів</li>
       )}
     </ul>,
     document.body,
   )
+}

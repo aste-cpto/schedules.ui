@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { TablePaginationBar } from '~/ui/TablePaginationBar'
 import type { LessonDto } from '~/types/api/lesson'
 import type { ScheduleDto } from '~/types/api/schedule'
@@ -7,7 +7,7 @@ import { ScheduleEmptyState } from './ScheduleEmptyState'
 import { ScheduleRow } from './ScheduleRow'
 import { ScheduleTableHeader } from './ScheduleTableHeader'
 import { LessonCellEditModal } from './LessonCellEditModal/LessonCellEditModal'
-import { SCHEDULE_DAYS_PER_PAGE } from '../config/scheduleTableLayout'
+import { getScheduleTableWidth, SCHEDULE_DAYS_PER_PAGE } from '../config/scheduleTableLayout'
 import { useScheduleData } from '../hooks/useScheduleData'
 import { useDateColumnsPagination } from '../hooks/useDateColumnsPagination'
 import { useRecentlyEditedCell } from '../hooks/useRecentlyEditedCell'
@@ -19,9 +19,16 @@ type Props = {
   schedule: ScheduleDto
   isEditing: boolean
   onLessonsChange: (lessons: LessonDto[]) => void
+  onTableWidthChange?: (width: number) => void
 }
 
-export const ScheduleLessonsTable = ({ lessons, schedule, isEditing, onLessonsChange }: Props) => {
+export const ScheduleLessonsTable = ({
+  lessons,
+  schedule,
+  isEditing,
+  onLessonsChange,
+  onTableWidthChange,
+}: Props) => {
   const { dateColumns, groupedData, subjects, totalHours, dailyTotals } = useScheduleData(
     lessons,
     schedule,
@@ -37,7 +44,15 @@ export const ScheduleLessonsTable = ({ lessons, schedule, isEditing, onLessonsCh
   )
 
   const tableColSpan = 3 + visibleDateColumns.length + 1
+  const tableWidth = useMemo(
+    () => getScheduleTableWidth(visibleDateColumns.length),
+    [visibleDateColumns.length],
+  )
   const showPaginationBar = Boolean(rangeLabel || pagesCount > 1)
+
+  useEffect(() => {
+    onTableWidthChange?.(tableWidth)
+  }, [onTableWidthChange, tableWidth])
 
   const focusEditedCellPage = useCallback(
     (context: LessonCellContext) => {
@@ -69,7 +84,7 @@ export const ScheduleLessonsTable = ({ lessons, schedule, isEditing, onLessonsCh
 
   return (
     <>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
         {showPaginationBar && (
           <TablePaginationBar
             rangeLabel={rangeLabel}
@@ -79,10 +94,12 @@ export const ScheduleLessonsTable = ({ lessons, schedule, isEditing, onLessonsCh
           />
         )}
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="overflow-x-auto">
-            <div className="w-max min-w-full overflow-hidden rounded-xl border border-border bg-bg-surface shadow-sm">
-              <table className="w-max border-collapse text-sm">
+        <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto [scrollbar-gutter:stable]">
+          <div
+            className="overflow-hidden rounded-xl bg-bg-surface shadow-sm ring-1 ring-border ring-inset"
+            style={{ width: tableWidth, maxWidth: '100%' }}
+          >
+            <table className="w-full border-collapse text-sm">
                 <ScheduleTableHeader visibleDateColumns={visibleDateColumns} />
 
                 <tbody>
@@ -123,7 +140,6 @@ export const ScheduleLessonsTable = ({ lessons, schedule, isEditing, onLessonsCh
                 )}
               </table>
             </div>
-          </div>
         </div>
       </div>
 

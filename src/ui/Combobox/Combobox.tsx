@@ -16,6 +16,8 @@ type ComboboxProps = {
   wrapperClassName?: string
   id?: string
   placeholder?: string
+  /** When false, only existing options can be selected (no free-text create). */
+  allowCreate?: boolean
 }
 
 export const Combobox = ({
@@ -26,6 +28,7 @@ export const Combobox = ({
   wrapperClassName,
   id,
   placeholder,
+  allowCreate = false,
 }: ComboboxProps) => {
   const triggerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
@@ -79,6 +82,7 @@ export const Combobox = ({
             inputValue={inputValue}
             filteredOptions={filteredOptions}
             exactMatch={exactMatch}
+            allowCreate={allowCreate}
             onSelectOption={actions.selectOption}
             onCreateOption={actions.createOption}
           />
