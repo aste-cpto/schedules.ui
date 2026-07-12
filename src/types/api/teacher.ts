@@ -19,6 +19,7 @@ export type TeachersListResponse = {
   page: number
   pageRecords: number
   totalPages: number
+  totalCount: number
 }
 
 export type TeachingLoadDto = {

@@ -56,4 +56,5 @@ export type StudyProgramsListResponse = {
   page: number
   pageRecords: number
   totalPages: number
+  totalCount: number
 }

@@ -58,12 +58,7 @@ export function useTeachers(params?: TeachersListParams): UseTeachersResult {
         page: data.page,
         pageRecords: data.pageRecords,
         pagesCount: data.totalPages,
-        total: estimateTotalFromApiResponse(
-          data.page,
-          data.pageRecords,
-          data.totalPages,
-          normalizedItems.length,
-        ),
+        total: data.totalCount,
       })
     } catch (err) {
       const message = getErrorMessage(err, 'Не вдалося завантажити викладачів')

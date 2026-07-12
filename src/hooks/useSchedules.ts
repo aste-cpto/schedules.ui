@@ -52,12 +52,7 @@ export function useSchedules(params?: SchedulesListParams): UseSchedulesResult {
         page: data.page,
         pageRecords: data.pageRecords,
         pagesCount: data.totalPages,
-        total: estimateTotalFromApiResponse(
-          data.page,
-          data.pageRecords,
-          data.totalPages,
-          data.items.length,
-        ),
+        total: data.totalCount,
       })
     } catch (err) {
       const message = getErrorMessage(err, 'Не вдалося завантажити розклади')
@@ -74,11 +69,11 @@ export function useSchedules(params?: SchedulesListParams): UseSchedulesResult {
         setLoading(false)
       }
     }
-  }, [params?.page, params?.pageRecords, params?.search, params?.year, toast])
+  }, [params?.page, params?.pageRecords, params?.search, params?.year, params?.startDate, params?.endDate, toast])
 
   useAutoListFetch(
     refetch,
-    [params?.page, params?.pageRecords, params?.search, params?.year],
+    [params?.page, params?.pageRecords, params?.search, params?.year, params?.startDate, params?.endDate],
     { pause: isModalOpen },
   )
 

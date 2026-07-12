@@ -55,7 +55,7 @@ export function useTeachersPage() {
 
   const rangeLabel =
     pagination && pagination.total > 0
-      ? `${(pagination.page - 1) * pagination.pageRecords + 1}–${Math.min(
+      ? `Відображається ${(pagination.page - 1) * pagination.pageRecords + 1}–${Math.min(
           pagination.page * pagination.pageRecords,
           pagination.total,
         )} з ${pagination.total}`

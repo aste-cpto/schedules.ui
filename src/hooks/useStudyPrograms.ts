@@ -45,12 +45,7 @@ export function useStudyPrograms(params?: StudyProgramsListParams): UseStudyProg
         page: data.page,
         pageRecords: data.pageRecords,
         pagesCount: data.totalPages,
-        total: estimateTotalFromApiResponse(
-          data.page,
-          data.pageRecords,
-          data.totalPages,
-          data.items.length,
-        ),
+        total: data.totalCount,
       })
     } catch (err) {
       const message = getErrorMessage(err, 'Не вдалося завантажити навчальні програми')

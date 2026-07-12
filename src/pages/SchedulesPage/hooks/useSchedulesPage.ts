@@ -24,8 +24,10 @@ export function useSchedulesPage() {
       search: debouncedSearch || undefined,
       page,
       pageRecords,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
     }),
-    [debouncedSearch, page, pageRecords],
+    [debouncedSearch, page, pageRecords, startDate, endDate],
   )
 
   const { schedules, loading, error, pagination, refetch, deleteSchedule } =
@@ -50,7 +52,7 @@ export function useSchedulesPage() {
 
   const rangeLabel =
     pagination && pagination.total > 0
-      ? `${(pagination.page - 1) * pagination.pageRecords + 1}–${Math.min(
+      ? `Відображається ${(pagination.page - 1) * pagination.pageRecords + 1}–${Math.min(
           pagination.page * pagination.pageRecords,
           pagination.total,
         )} з ${pagination.total}`

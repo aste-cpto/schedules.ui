@@ -6,6 +6,8 @@ export type ApiListQueryParams = {
 
 export type SchedulesListQueryParams = ApiListQueryParams & {
   year?: number
+  startDate?: string
+  endDate?: string
 }
 
 export function buildApiListQuery(params?: ApiListQueryParams): string {
@@ -30,6 +32,8 @@ export function buildSchedulesListQuery(params?: SchedulesListQueryParams): stri
   if (params.pageRecords !== undefined) searchParams.set('PageRecords', String(params.pageRecords))
   if (params.search) searchParams.set('Search', params.search)
   if (params.year !== undefined) searchParams.set('Year', String(params.year))
+  if (params.startDate) searchParams.set('StartDate', params.startDate)
+  if (params.endDate) searchParams.set('EndDate', params.endDate)
 
   const query = searchParams.toString()
   return query ? `?${query}` : ''

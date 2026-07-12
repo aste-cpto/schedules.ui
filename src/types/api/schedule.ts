@@ -48,6 +48,8 @@ export type SchedulesListParams = {
   page?: number
   pageRecords?: number
   year?: number
+  startDate?: string
+  endDate?: string
 }
 
 export type SchedulesListResponse = {
@@ -55,6 +57,7 @@ export type SchedulesListResponse = {
   page: number
   pageRecords: number
   totalPages: number
+  totalCount: number
 }
 
 export type CreateScheduleDto = {

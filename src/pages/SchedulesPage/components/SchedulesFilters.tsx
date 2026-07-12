@@ -48,7 +48,6 @@ export const SchedulesFilters = ({
           value={values.startDate}
           onChange={onStartDateChange}
           maxDate={endDate}
-          disabled
         />
 
         <DatePicker
@@ -56,7 +55,6 @@ export const SchedulesFilters = ({
           value={values.endDate}
           onChange={onEndDateChange}
           minDate={startDate}
-          disabled
         />
 
         <Select
