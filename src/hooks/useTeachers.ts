@@ -4,7 +4,6 @@ import { useAutoListFetch } from '~/hooks/useAutoListFetch'
 import { useToast } from '~/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { toApiNumber } from '~/lib/lessonDateUtils'
-import { estimateTotalFromApiResponse } from '~/lib/paginationUtils'
 import {
   normalizeTeacherStatus,
   TEACHER_STATUS,
