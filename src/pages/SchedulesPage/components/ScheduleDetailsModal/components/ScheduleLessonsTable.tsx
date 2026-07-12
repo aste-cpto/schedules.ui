@@ -94,9 +94,9 @@ export const ScheduleLessonsTable = ({
           />
         )}
 
-        <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto [scrollbar-gutter:stable]">
+        <div className="min-h-0 flex-1 flex flex-col items-start">
           <div
-            className="overflow-hidden rounded-xl bg-bg-surface shadow-sm ring-1 ring-border ring-inset"
+            className="overflow-auto min-h-0 rounded-xl bg-bg-surface shadow-sm ring-1 ring-border ring-inset [scrollbar-gutter:stable]"
             style={{ width: tableWidth, maxWidth: '100%' }}
           >
             <table className="w-full border-collapse text-sm">

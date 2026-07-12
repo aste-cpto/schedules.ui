@@ -13,7 +13,7 @@ type ScheduleTableHeaderProps = {
 const STICKY_HEADER_CLASS = 'sticky z-20 bg-bg-muted'
 
 export const ScheduleTableHeader = ({ visibleDateColumns }: ScheduleTableHeaderProps) => (
-  <thead>
+  <thead className="sticky top-0 z-30">
     <tr className="border-b border-border bg-bg-muted text-left text-text-secondary">
       <th
         style={getStickyLeftStyle('index')}
@@ -47,7 +47,7 @@ export const ScheduleTableHeader = ({ visibleDateColumns }: ScheduleTableHeaderP
         <th
           key={date}
           style={getDateColumnStyle()}
-          className="px-2 py-2 text-center text-xs font-semibold"
+          className="bg-bg-muted px-2 py-2 text-center text-xs font-semibold"
         >
           {formatDateDisplay(date)}
         </th>
@@ -60,7 +60,7 @@ export const ScheduleTableHeader = ({ visibleDateColumns }: ScheduleTableHeaderP
           'px-3 py-3 text-left font-semibold whitespace-normal shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.08)]',
         )}
       >
-        Викладачі (всього)
+        Викладачі
       </th>
     </tr>
   </thead>

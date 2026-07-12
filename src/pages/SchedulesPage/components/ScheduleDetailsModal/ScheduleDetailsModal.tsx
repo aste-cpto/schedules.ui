@@ -54,11 +54,11 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
     <ModalLayout
       open={open}
       onClose={onClose}
-      panelClassName="w-fit max-w-[80vw] max-h-[90vh] flex flex-col overflow-hidden !py-6"
+      panelClassName="w-fit max-w-[95vw] max-h-[96vh] flex flex-col overflow-hidden !py-4"
     >
       <div
         className={cn(
-          'flex min-h-0 min-w-0 flex-1 flex-col gap-6 overflow-x-hidden',
+          'flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-x-hidden',
           !contentWidth && 'w-full max-w-2xl',
           contentWidth != null && 'max-w-full',
         )}
@@ -147,14 +147,15 @@ export const ScheduleDetailsModal = ({ open, schedule, onClose, onUpdate }: Prop
         <footer className="flex shrink-0 flex-col gap-4 pt-2">
           {validationError && <FormErrorMessage message={validationError} />}
 
-          {isEditing && (
-            <p className="text-sm text-text-secondary">
-              Натисніть на клітинку дня, щоб редагувати типи навчань, викладачів та години.
-            </p>
-          )}
-
-          <div className="flex justify-end">
-            <Button type="button" onClick={onClose} variant="primary" className="px-8">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1">
+              {isEditing && (
+                <p className="text-sm text-text-secondary">
+                  Натисніть на клітинку дня, щоб редагувати типи навчань, викладачів та години.
+                </p>
+              )}
+            </div>
+            <Button type="button" onClick={onClose} variant="primary" className="shrink-0 px-8">
               Закрити
             </Button>
           </div>

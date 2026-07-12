@@ -21,7 +21,7 @@ export function formatSubjectRemainingHint(remainingHours: number): string {
   }
 
   if (remainingHours === 0) {
-    return 'Години розписані'
+    return ''
   }
 
   return `Перевищено на ${Math.abs(remainingHours)} год.`

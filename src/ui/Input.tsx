@@ -59,6 +59,12 @@ export const Input = ({
             (showClear || showTrailingAction) && 'pr-9',
             className,
           )}
+          onWheel={(e) => {
+            if (props.type === 'number') {
+              e.currentTarget.blur()
+            }
+            props.onWheel?.(e)
+          }}
           {...props}
         />
 

@@ -1,6 +1,7 @@
 import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { ModalLayout } from '~/ui/ModalLayout'
+import { useRegisterModalOpen } from '~/contexts/ModalGuardContext'
 import { Button } from './Button'
 
 export type ConfirmHandlerResult = void | boolean | Promise<void | boolean>
@@ -31,6 +32,8 @@ export const ConfirmModal = ({
 }: ConfirmModalProps) => {
   const [isConfirming, setIsConfirming] = useState(false)
   const confirmButtonVariant = variant === 'danger' ? 'danger' : 'primary'
+
+  useRegisterModalOpen(open)
 
   useEffect(() => {
     if (!open) {

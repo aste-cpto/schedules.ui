@@ -29,9 +29,10 @@ export const ModalLayout = ({
 
   const classes = panelClassName?.split(/\s+/).filter(Boolean) ?? []
   const maxWidthClass = classes.find((c) => c.startsWith('max-w-')) || 'max-w-md'
+  const maxHeightClass = classes.find((c) => c.startsWith('max-h-')) || 'max-h-[90vh]'
   const fitsContent = classes.includes('w-fit')
   const otherPanelClasses = classes
-    .filter((c) => !c.startsWith('max-w-') && c !== 'w-fit' && c !== 'w-full')
+    .filter((c) => !c.startsWith('max-w-') && !c.startsWith('max-h-') && c !== 'w-fit' && c !== 'w-full')
     .join(' ')
   const showScrollbars = classes.includes('scrollbar-visible')
   const usesInternalScroll = classes.some(
@@ -76,7 +77,8 @@ export const ModalLayout = ({
           aria-labelledby={labelledBy}
           aria-describedby={describedBy}
           className={cn(
-            'rounded-xl border border-border bg-bg-surface px-6 py-8 shadow-lg max-h-[90vh]',
+            'rounded-xl border border-border bg-bg-surface px-6 py-8 shadow-lg',
+            maxHeightClass,
             fitsContent ? 'w-fit max-w-full' : 'w-full',
             fitsContent && otherPanelClasses.includes('flex') && 'items-start',
             usesInternalScroll ? 'min-h-0 overflow-hidden' : 'overflow-y-auto',
