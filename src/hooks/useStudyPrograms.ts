@@ -3,7 +3,6 @@ import { useModalGuard } from '~/contexts/ModalGuardContext'
 import { useAutoListFetch } from '~/hooks/useAutoListFetch'
 import { useToast } from '~/ui/toast/useToast'
 import { getErrorMessage } from '~/lib/formatApiError'
-import { estimateTotalFromApiResponse } from '~/lib/paginationUtils'
 import { studyProgramsService } from '~/services/studyProgramsService'
 import type {
   StudyProgramShortDto,
