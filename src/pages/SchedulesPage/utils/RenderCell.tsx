@@ -2,10 +2,14 @@ import type { Schedule } from '~/types/schedule'
 import type { ScheduleTableColumnKey } from '../config/scheduleTableColumns'
 // import { StatusBadge } from '../components/StatusBadge'
 
-export function renderCell(columnKey: ScheduleTableColumnKey, schedule: Schedule, index: number) {
+export function renderCell(
+  columnKey: ScheduleTableColumnKey,
+  schedule: Schedule,
+  rowNumber: number,
+) {
   switch (columnKey) {
     case 'index':
-      return index + 1
+      return rowNumber
     // case 'status':
     //   return <StatusBadge status={schedule.status} />
     case 'group':
