@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { LoginOverlay } from '~/auth/LoginOverlay'
 import { Header } from '~/layout/Header'
+import ReportsPage from '~/pages/ReportsPage/ReportsPage'
 import SchedulesPage from '~/pages/SchedulesPage/SchedulesPage'
 import StudyProgramsPage from '~/pages/StudyProgramsPage/StudyProgramsPage'
 import TeachersPage from '~/pages/TeachersPage/TeachersPage'
@@ -14,6 +15,7 @@ export const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<SchedulesPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
         <Route path="/teachers" element={<TeachersPage />} />
         <Route path="/study-programs" element={<StudyProgramsPage />} />
       </Routes>
