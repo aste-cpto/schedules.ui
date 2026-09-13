@@ -6,11 +6,13 @@ export type TeacherLoadReportItemDto = {
   teacherId: number
   teacherName: string
   monthlyHours: number[]
+  usedHours: number
   totalHours: number
 }
 
 export type TeacherLoadReportTotalsDto = {
   monthlyHours: number[]
+  usedHours: number
   totalHours: number
 }
 

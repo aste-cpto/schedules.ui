@@ -10,15 +10,16 @@ function ReportsPage() {
 
   return (
     <main className="container-app py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-text">Звіти</h1>
-        <p className="mt-1 text-caption">Педагогічне навантаження викладачів</p>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-text">Звіти</h1>
+          <p className="mt-1 text-caption">Педагогічне навантаження викладачів</p>
+        </div>
+
+        <ReportsFilters year={year} onYearChange={setYear} />
       </div>
 
-      <div className="space-y-4">
-        <ReportsFilters year={year} onYearChange={setYear} />
-        {report && <ReportsTable items={report.items} totals={report.totals} />}
-      </div>
+      {report && <ReportsTable items={report.items} totals={report.totals} />}
     </main>
   )
 }

@@ -13,7 +13,7 @@ export const ReportsFilters = ({ year, onYearChange }: ReportsFiltersProps) => {
       value={String(year)}
       onChange={(nextValue) => onYearChange(Number(nextValue))}
       options={REPORT_YEAR_OPTIONS}
-      wrapperClassName="w-full sm:w-[7rem]"
+      wrapperClassName="w-full sm:w-[7rem] shrink-0"
     />
   )
 }
