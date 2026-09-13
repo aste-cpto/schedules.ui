@@ -13,17 +13,18 @@ import type { TeacherItemDto } from '~/types/api/teacher'
 type TeachersTableProps = {
   teachers: TeacherItemDto[]
   rowActions?: TeacherRowActionHandlers
+  startIndex?: number
 }
 
 function renderCell(
   columnKey: TeacherTableColumnKey,
   teacher: TeacherItemDto,
-  index: number,
+  rowNumber: number,
   rowActions?: TeacherRowActionHandlers,
 ) {
   switch (columnKey) {
     case 'index':
-      return index + 1
+      return rowNumber
     case 'displayName':
       return teacher.displayName
     case 'status':
@@ -37,7 +38,7 @@ function renderCell(
   }
 }
 
-export const TeachersTable = ({ teachers, rowActions }: TeachersTableProps) => {
+export const TeachersTable = ({ teachers, rowActions, startIndex = 0 }: TeachersTableProps) => {
   return (
     <DataTable>
       <table className="min-w-full border-collapse text-sm">
@@ -70,7 +71,7 @@ export const TeachersTable = ({ teachers, rowActions }: TeachersTableProps) => {
               >
                 {TEACHER_TABLE_COLUMNS.map((column) => (
                   <td key={column.key} className={column.cellClassName}>
-                    {renderCell(column.key, teacher, index, rowActions)}
+                    {renderCell(column.key, teacher, startIndex + index + 1, rowActions)}
                   </td>
                 ))}
               </tr>
