@@ -12,17 +12,18 @@ import type { StudyProgramShortDto } from '~/types/api/studyProgram'
 type StudyProgramsTableProps = {
   studyPrograms: StudyProgramShortDto[]
   rowActions?: StudyProgramRowActionHandlers
+  startIndex?: number
 }
 
 function renderCell(
   columnKey: StudyProgramTableColumnKey,
   program: StudyProgramShortDto,
-  index: number,
+  rowNumber: number,
   rowActions?: StudyProgramRowActionHandlers,
 ) {
   switch (columnKey) {
     case 'index':
-      return index + 1
+      return rowNumber
     case 'name':
       return program.name
     case 'hours':
@@ -32,7 +33,11 @@ function renderCell(
   }
 }
 
-export const StudyProgramsTable = ({ studyPrograms, rowActions }: StudyProgramsTableProps) => {
+export const StudyProgramsTable = ({
+  studyPrograms,
+  rowActions,
+  startIndex = 0,
+}: StudyProgramsTableProps) => {
   return (
     <DataTable>
       <table className="min-w-full border-collapse text-sm">
@@ -65,7 +70,7 @@ export const StudyProgramsTable = ({ studyPrograms, rowActions }: StudyProgramsT
                 >
                   {STUDY_PROGRAM_TABLE_COLUMNS.map((column) => (
                     <td key={column.key} className={column.cellClassName}>
-                      {renderCell(column.key, program, index, rowActions)}
+                      {renderCell(column.key, program, startIndex + index + 1, rowActions)}
                     </td>
                   ))}
                 </tr>

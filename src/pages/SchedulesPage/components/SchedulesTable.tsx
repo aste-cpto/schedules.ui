@@ -13,12 +13,14 @@ type SchedulesTableProps = {
   schedules: Schedule[]
   rowActions?: ScheduleRowActionHandlers
   onScheduleUpdated?: () => void
+  startIndex?: number
 }
 
 export const SchedulesTable = ({
   schedules,
   rowActions,
   onScheduleUpdated,
+  startIndex = 0,
 }: SchedulesTableProps) => {
   const { isModalOpen, setIsModalOpen, scheduleDto, enhancedActions } = useScheduleTableState(
     schedules,
@@ -63,7 +65,7 @@ export const SchedulesTable = ({
                         {column.key === 'actions' ? (
                           <RowActionsMenu schedule={schedule} actions={enhancedActions} />
                         ) : (
-                          renderCell(column.key, schedule, index)
+                          renderCell(column.key, schedule, startIndex + index + 1)
                         )}
                       </td>
                     ))}
