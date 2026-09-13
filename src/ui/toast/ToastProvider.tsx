@@ -1,6 +1,6 @@
 import { createContext, useCallback, useMemo, useState, useRef, type ReactNode } from 'react'
 import { ToastViewport } from './ToastViewport'
-import { TOAST_DURATION_MS, type ToastContextValue, type ToastItem } from './types'
+import { TOAST_DURATION_MS, ERROR_TOAST_DURATION_MS, type ToastContextValue, type ToastItem } from './types'
 
 export const ToastContext = createContext<ToastContextValue | null>(null)
 
@@ -28,11 +28,12 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
       activeMessages.current.add(message)
 
       setToasts((prev) => [...prev, { id, type, message }])
+      const duration = type === 'error' ? ERROR_TOAST_DURATION_MS : TOAST_DURATION_MS
       
       window.setTimeout(() => {
         activeMessages.current.delete(message)
         dismiss(id)
-      }, TOAST_DURATION_MS)
+      }, duration)
     },
     [dismiss],
   )
