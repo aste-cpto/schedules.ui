@@ -34,14 +34,18 @@ export const Tooltip = ({ content, children, className }: TooltipProps) => {
   const dismiss = useDismiss(context)
   const role = useRole(context, { role: 'tooltip' })
   const { getReferenceProps, getFloatingProps } = useInteractions([hover, focus, dismiss, role])
+  const { setReference, setFloating } = refs
 
   return (
     <>
-      {cloneElement(children, getReferenceProps({ ref: refs.setReference, ...children.props }))}
+      {cloneElement(
+        children,
+        getReferenceProps({ ref: setReference, ...(children.props as Record<string, unknown>) }),
+      )}
       {open && (
         <FloatingPortal>
           <div
-            ref={refs.setFloating}
+            ref={setFloating}
             style={floatingStyles}
             className={cn(
               'z-[130] max-w-xs rounded-md border border-border bg-bg-surface px-2.5 py-1.5 text-xs font-medium text-text shadow-md',
