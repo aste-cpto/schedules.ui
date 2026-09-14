@@ -5,6 +5,8 @@ type UseAutoListFetchOptions = {
   pause?: boolean
 }
 
+const DEBOUNCE_DELAY_MS = 10
+
 export function useAutoListFetch(
   refetch: () => Promise<void>,
   deps: unknown[],
@@ -24,7 +26,13 @@ export function useAutoListFetch(
     }
 
     pendingRefetchRef.current = false
-    void refetch()
+    
+    // Debounce to prevent double-fetches (e.g. from React 18 Strict Mode double mounts)
+    const timer = setTimeout(() => {
+      void refetch()
+    }, DEBOUNCE_DELAY_MS)
+
+    return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps are passed explicitly by caller
   }, [...deps, pause, refetch])
 
@@ -34,7 +42,10 @@ export function useAutoListFetch(
 
     if (wasPaused && !pause && pendingRefetchRef.current) {
       pendingRefetchRef.current = false
-      void refetch()
+      const timer = setTimeout(() => {
+        void refetch()
+      }, DEBOUNCE_DELAY_MS)
+      return () => clearTimeout(timer)
     }
   }, [pause, refetch])
 

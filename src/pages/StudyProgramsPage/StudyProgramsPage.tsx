@@ -7,6 +7,7 @@ import { StudyProgramModal } from '~/pages/StudyProgramsPage/components/StudyPro
 import { StudyProgramsFilters } from '~/pages/StudyProgramsPage/components/StudyProgramsFilters'
 import { StudyProgramsTable } from '~/pages/StudyProgramsPage/components/StudyProgramsTable'
 import { useStudyProgramsPage } from '~/pages/StudyProgramsPage/hooks/useStudyProgramsPage'
+import { getPageStartIndex } from '~/lib/paginationUtils'
 
 function StudyProgramsPage() {
   const {
@@ -54,7 +55,11 @@ function StudyProgramsPage() {
             />
 
             <div className="relative">
-              <StudyProgramsTable studyPrograms={studyPrograms} rowActions={rowActions} />
+              <StudyProgramsTable
+                studyPrograms={studyPrograms}
+                rowActions={rowActions}
+                startIndex={getPageStartIndex(pagination?.page, pagination?.pageRecords)}
+              />
 
               {loading && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-xl bg-bg-surface/80 text-sm text-text-secondary backdrop-blur-[1px]">

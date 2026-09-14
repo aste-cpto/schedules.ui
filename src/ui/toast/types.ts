@@ -12,3 +12,4 @@ export type ToastContextValue = {
 }
 
 export const TOAST_DURATION_MS = 3000
+export const ERROR_TOAST_DURATION_MS = 9000

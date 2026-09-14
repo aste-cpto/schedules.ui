@@ -6,6 +6,7 @@ import { TeacherModal } from '~/pages/TeachersPage/components/TeacherModal/Teach
 import { TeachersFilters } from '~/pages/TeachersPage/components/TeachersFilters'
 import { TeachersTable } from '~/pages/TeachersPage/components/TeachersTable'
 import { useTeachersPage } from '~/pages/TeachersPage/hooks/useTeachersPage'
+import { getPageStartIndex } from '~/lib/paginationUtils'
 
 function TeachersPage() {
   const {
@@ -51,7 +52,11 @@ function TeachersPage() {
             />
 
             <div className="relative">
-              <TeachersTable teachers={teachers} rowActions={rowActions} />
+              <TeachersTable
+                teachers={teachers}
+                rowActions={rowActions}
+                startIndex={getPageStartIndex(pagination?.page, pagination?.pageRecords)}
+              />
 
               {loading && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-xl bg-bg-surface/80 text-sm text-text-secondary backdrop-blur-[1px]">

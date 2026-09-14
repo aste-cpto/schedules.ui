@@ -6,6 +6,7 @@ import { ScheduleModal } from '~/pages/SchedulesPage/components/ScheduleModal/Sc
 import { SchedulesFilters } from '~/pages/SchedulesPage/components/SchedulesFilters'
 import { SchedulesTable } from '~/pages/SchedulesPage/components/SchedulesTable'
 import { useSchedulesPage } from '~/pages/SchedulesPage/hooks/useSchedulesPage'
+import { getPageStartIndex } from '~/lib/paginationUtils'
 
 function SchedulesPage() {
   const {
@@ -55,6 +56,7 @@ function SchedulesPage() {
                 schedules={schedules}
                 rowActions={rowActions}
                 onScheduleUpdated={() => void refetch({ silent: true })}
+                startIndex={getPageStartIndex(pagination?.page, pagination?.pageRecords)}
               />
 
               {loading && (

@@ -270,36 +270,59 @@ export function useLessonCellEdit({
       )
 
       const deletedIds = [...initialIds].filter((id) => !currentIds.has(id))
-      await Promise.all(deletedIds.map((id) => lessonsService.delete(id)))
+      const deletePromises = deletedIds.map((id) => lessonsService.delete(id))
 
       const lessonDate = toApiDateTime(context.date, '00:00:00')
 
-      await Promise.all(
-        entries.map(async (entry) => {
-          const payload = {
-            date: lessonDate,
-            hours: entry.hours,
-            order: resolveLessonOrderForSave(entry.type, entry.order),
-            type: entry.type,
-            teacherId: entry.teacherId,
-            subjectId: context.subjectId,
-            scheduleId: schedule.id,
-          }
+      const savePromises = entries.map((entry) => {
+        const payload = {
+          date: lessonDate,
+          hours: entry.hours,
+          order: resolveLessonOrderForSave(entry.type, entry.order),
+          type: entry.type,
+          teacherId: entry.teacherId,
+          subjectId: context.subjectId,
+          scheduleId: schedule.id,
+        }
 
-          if (entry.id) {
-            await lessonsService.update(entry.id, { ...payload, id: entry.id })
-            return
-          }
+        if (entry.id) {
+          return lessonsService.update(entry.id, { ...payload, id: entry.id })
+        }
 
-          await lessonsService.create(payload)
-        }),
-      )
+        return lessonsService.create(payload)
+      })
 
-      const updatedSchedule = await schedulesService.getById(schedule.id)
+      const allPromises = [...deletePromises, ...savePromises]
+      
+      if (allPromises.length === 0) {
+        onSaved(schedule.lessons || [])
+        return
+      }
 
-      const updatedLessons = updatedSchedule.lessons || []
-      onSaved(updatedLessons)
-      toast.success('Заняття збережено')
+      const results = await Promise.allSettled(allPromises)
+      
+      const successes = results.filter((r) => r.status === 'fulfilled')
+      const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+
+      if (successes.length > 0) {
+        const updatedSchedule = await schedulesService.getById(schedule.id)
+        const updatedLessons = updatedSchedule.lessons || []
+        
+        if (failures.length > 0) {
+          toast.success('Частину занять збережено')
+          failures.forEach((failure) => {
+            toast.error(getErrorMessage(failure.reason, 'Деякі заняття не вдалося зберегти'))
+          })
+        } else {
+          toast.success('Заняття збережено')
+        }
+        
+        onSaved(updatedLessons)
+      } else if (failures.length > 0) {
+        failures.forEach((failure) => {
+          toast.error(getErrorMessage(failure.reason, 'Не вдалося зберегти заняття'))
+        })
+      }
     } catch (err) {
       toast.error(getErrorMessage(err, 'Не вдалося зберегти заняття'))
     } finally {

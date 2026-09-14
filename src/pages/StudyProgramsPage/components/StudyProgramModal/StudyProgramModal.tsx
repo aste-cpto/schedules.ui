@@ -63,7 +63,7 @@ export const StudyProgramModal = ({
             <div className="flex flex-col gap-8">
               <Input
                 label="Назва навчальної програми"
-                placeholder="Наприклад: Факультет кібернетики"
+                placeholder="Введіть назву"
                 value={state.programName}
                 onChange={(e) => actions.setProgramName(e.target.value)}
                 required
