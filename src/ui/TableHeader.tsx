@@ -13,6 +13,7 @@ type TableHeaderProps = {
   columns: TableHeaderColumn[]
   rowClassName?: string
   variant?: TableVariant
+  sticky?: boolean
 }
 
 const VARIANT_CLASSES: Record<TableVariant, string> = {
@@ -21,9 +22,14 @@ const VARIANT_CLASSES: Record<TableVariant, string> = {
   secondary: 'bg-bg-muted text-text-secondary border-b border-border',
 }
 
-export const TableHeader = ({ columns, rowClassName, variant = 'primary' }: TableHeaderProps) => {
+export const TableHeader = ({
+  columns,
+  rowClassName,
+  variant = 'primary',
+  sticky = false,
+}: TableHeaderProps) => {
   return (
-    <thead>
+    <thead className={cn(sticky && 'sticky top-0 z-10', sticky && VARIANT_CLASSES[variant])}>
       <tr className={cn('text-left', VARIANT_CLASSES[variant], rowClassName)}>
         {columns.map((column) => (
           <th key={column.key} className={cn('px-4 py-3 font-semibold', column.className)}>
