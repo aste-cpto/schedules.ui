@@ -7,6 +7,7 @@ import type { TeacherLoadReportItemDto, TeacherLoadReportTotalsDto } from '~/typ
 type ReportsTableProps = {
   items: TeacherLoadReportItemDto[]
   totals: TeacherLoadReportTotalsDto
+  isPedagogical?: boolean
 }
 
 const formatHours = (hours: number) => (hours > 0 ? String(hours) : '—')
@@ -23,10 +24,12 @@ const HoursPair = ({
   usedHours,
   totalHours,
   overNorm,
+  isPedagogical = true,
 }: {
   usedHours: number
   totalHours: number
   overNorm?: boolean
+  isPedagogical?: boolean
 }) => {
   const content = (
     <span className="inline-flex items-baseline justify-center gap-1.5">
@@ -35,7 +38,7 @@ const HoursPair = ({
       </span>
       <span className="text-text-muted">/</span>
       <span className={cn(overNorm ? 'text-rose-500' : 'text-text-secondary')}>
-        {formatHours(totalHours)}
+        {isPedagogical ? formatHours(totalHours) : '—'}
       </span>
     </span>
   )
@@ -51,7 +54,7 @@ const HoursPair = ({
   )
 }
 
-export const ReportsTable = ({ items, totals }: ReportsTableProps) => {
+export const ReportsTable = ({ items, totals, isPedagogical = true }: ReportsTableProps) => {
   return (
     <DataTable className="border-border/60 shadow-none">
       <div className="scrollbar-hidden h-[30rem] overflow-auto">
@@ -81,7 +84,7 @@ export const ReportsTable = ({ items, totals }: ReportsTableProps) => {
 
           <tbody>
             {items.map((item, index) => {
-              const overNorm = item.usedHours > item.totalHours
+              const overNorm = isPedagogical && item.usedHours > item.totalHours
               const rowBg = index % 2 === 0 ? 'bg-bg-surface' : 'bg-bg-muted/35'
 
               return (
@@ -125,6 +128,7 @@ export const ReportsTable = ({ items, totals }: ReportsTableProps) => {
                       usedHours={item.usedHours}
                       totalHours={item.totalHours}
                       overNorm={overNorm}
+                      isPedagogical={isPedagogical}
                     />
                   </td>
                 </tr>
@@ -149,7 +153,7 @@ export const ReportsTable = ({ items, totals }: ReportsTableProps) => {
                 </td>
               ))}
               <td className="sticky right-0 z-40 border-t border-l border-border bg-bg-muted px-3 py-3 text-center">
-                <HoursPair usedHours={totals.usedHours} totalHours={totals.totalHours} />
+                <HoursPair usedHours={totals.usedHours} totalHours={totals.totalHours} isPedagogical={isPedagogical} />
               </td>
             </tr>
           </tfoot>
