@@ -1,5 +1,6 @@
 export type TeacherLoadReportParams = {
   year: number
+  types?: string[]
 }
 
 export type TeacherLoadReportItemDto = {

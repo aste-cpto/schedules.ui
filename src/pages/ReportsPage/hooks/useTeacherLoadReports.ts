@@ -31,9 +31,9 @@ export function useTeacherLoadReports(params: TeacherLoadReportParams | null) {
     } finally {
       setLoading(false)
     }
-  }, [params?.year, toast])
+  }, [params, toast])
 
-  useAutoListFetch(refetch, [params?.year], {
+  useAutoListFetch(refetch, [params], {
     pause: isModalOpen,
   })
 

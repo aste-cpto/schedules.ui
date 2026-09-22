@@ -7,6 +7,7 @@ import { useTeacherLoadReports } from '~/pages/ReportsPage/hooks/useTeacherLoadR
 function ReportsPage() {
   const { options, defaultYear, loading: yearsLoading } = useReportYears()
   const [year, setYear] = useState<number | null>(null)
+  const [loadTypes, setLoadTypes] = useState<string[]>(['Pedagogical'])
 
   useEffect(() => {
     if (!yearsLoading && year === null && defaultYear !== undefined) {
@@ -14,9 +15,15 @@ function ReportsPage() {
     }
   }, [yearsLoading, defaultYear, year])
 
-  const params = useMemo(() => (year !== null ? { year } : null), [year])
+  const params = useMemo(() => {
+    if (year === null) return null
+    const apiTypes = loadTypes.includes('Pedagogical') ? [] : loadTypes
+    return { year, types: apiTypes }
+  }, [year, loadTypes])
+
   const { report, loading: reportLoading } = useTeacherLoadReports(params)
 
+  const isPedagogical = loadTypes.includes('Pedagogical')
   const showLoading = yearsLoading || reportLoading
 
   return (
@@ -28,12 +35,18 @@ function ReportsPage() {
         </div>
 
         {year !== null && (
-          <ReportsFilters year={year} options={options} onYearChange={setYear} />
+          <ReportsFilters 
+            year={year} 
+            options={options} 
+            onYearChange={setYear} 
+            loadTypes={loadTypes}
+            onLoadTypesChange={setLoadTypes}
+          />
         )}
       </div>
 
       <div className="relative min-h-[30rem]">
-        {report && <ReportsTable items={report.items} totals={report.totals} />}
+        {report && <ReportsTable items={report.items} totals={report.totals} isPedagogical={isPedagogical} />}
         
         {showLoading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-xl bg-bg-surface/80 text-sm text-text-secondary backdrop-blur-[1px]">
