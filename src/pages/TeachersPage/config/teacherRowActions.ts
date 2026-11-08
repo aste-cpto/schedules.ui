@@ -36,7 +36,6 @@ export function getTeacherRowActions(
       icon: Trash2,
       iconClassName: 'h-4 w-4 shrink-0 text-rose-500/80',
       tone: 'danger',
-      disabled: true,
       onClick: () => handlers.onDelete(teacher.id),
     },
   ]

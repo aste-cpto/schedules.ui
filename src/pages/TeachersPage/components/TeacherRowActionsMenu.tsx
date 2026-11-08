@@ -1,7 +1,7 @@
 import { FloatingPortal } from '@floating-ui/react'
 import { EllipsisVertical } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { ConfirmModal } from '~/ui/ConfirmModal'
+import { DeleteConfirmModal } from '~/ui/DeleteConfirmModal'
 import { useClickOutside } from '~/hooks/useClickOutside'
 import { useFloatingDropdown } from '~/hooks/useFloatingDropdown'
 import { mergeRefs } from '~/lib/mergeRefs'
@@ -93,12 +93,13 @@ export const TeacherRowActionsMenu = ({ teacher, actions }: TeacherRowActionsMen
         </FloatingPortal>
       )}
 
-      <ConfirmModal
+      <DeleteConfirmModal
         open={deleteModalOpen}
         title="Видалення викладача"
-        description="Ви впевнені, що хочете видалити цього викладача? Викладач буде деактивований."
+        entityName={teacher.displayName}
+        description="Ви впевнені, що бажаєте видалити цього викладача?"
+        consequence="Якщо за цим викладачем були закріплені заняття, вони не зникнуть і надалі відображатимуться у відповідних розкладах."
         confirmText="Видалити"
-        variant="danger"
         onConfirm={() => actions?.onDelete(teacher.id) ?? false}
         onClose={() => setDeleteModalOpen(false)}
       />

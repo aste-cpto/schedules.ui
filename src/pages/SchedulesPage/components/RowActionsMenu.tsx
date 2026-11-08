@@ -1,7 +1,7 @@
 import { FloatingPortal } from '@floating-ui/react'
 import { EllipsisVertical } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { ConfirmModal } from '~/ui/ConfirmModal'
+import { DeleteConfirmModal } from '~/ui/DeleteConfirmModal'
 import {
   getScheduleRowActions,
   type ScheduleRowActionHandlers,
@@ -84,11 +84,13 @@ export const RowActionsMenu = ({
         </FloatingPortal>
       )}
 
-      <ConfirmModal
+      <DeleteConfirmModal
         open={deleteModalOpen}
-        title="Видалення"
-        description="Видалити цей розклад?"
-        variant="danger"
+        title="Видалення розкладу"
+        entityName={schedule.group ? `Група: ${schedule.group}` : undefined}
+        description="Ви впевнені, що бажаєте видалити цей розклад?"
+        consequence="Зверніть увагу: призначені заняття цього розкладу буде також безповоротно видалено. Дані неможливо відновити."
+        confirmText="Видалити"
         onConfirm={() => actions?.onDelete(schedule.id) ?? false}
         onClose={() => setDeleteModalOpen(false)}
       />

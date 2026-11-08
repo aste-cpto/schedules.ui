@@ -1,7 +1,7 @@
 import { FloatingPortal } from '@floating-ui/react'
 import { EllipsisVertical } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { ConfirmModal } from '~/ui/ConfirmModal'
+import { DeleteConfirmModal } from '~/ui/DeleteConfirmModal'
 import { useClickOutside } from '~/hooks/useClickOutside'
 import { useFloatingDropdown } from '~/hooks/useFloatingDropdown'
 import { mergeRefs } from '~/lib/mergeRefs'
@@ -96,12 +96,13 @@ export const StudyProgramRowActionsMenu = ({
         </FloatingPortal>
       )}
 
-      <ConfirmModal
+      <DeleteConfirmModal
         open={deleteModalOpen}
         title="Видалення навчальної програми"
-        description="Ви впевнені, що хочете видалити цю навчальну програму?"
+        entityName={program.name}
+        description="Ви впевнені, що бажаєте видалити цю навчальну програму?"
+        consequence="Існуючі розклади, сформовані за цією навчальною програмою, не буде зачеплено — вони залишаться без змін."
         confirmText="Видалити"
-        variant="danger"
         onConfirm={() => actions?.onDelete(program.id) ?? false}
         onClose={() => setDeleteModalOpen(false)}
       />
