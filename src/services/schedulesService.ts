@@ -8,10 +8,16 @@ import type {
   SchedulesListResponse,
   UpdateScheduleDto,
 } from '~/types/api/schedule'
+import type { TeacherListItemDto } from '~/types/api/teacher'
 
 export const schedulesService = {
   getList(params?: SchedulesListParams) {
     return apiClient<SchedulesListResponse>(`/schedules${buildSchedulesListQuery(params)}`)
+  },
+
+  getScheduleTeachers(scheduleId: number, year?: number) {
+    const query = year !== undefined ? `?year=${encodeURIComponent(year)}` : ''
+    return apiClient<TeacherListItemDto[]>(`/schedules/${scheduleId}/teachers${query}`)
   },
 
   create(payload: CreateScheduleDto) {

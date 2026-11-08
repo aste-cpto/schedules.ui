@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToast } from '~/ui/toast/useToast'
-import { toApiDateTime } from '~/lib/dateUtils'
+import { parseIsoDate, toApiDateTime } from '~/lib/dateUtils'
+import { ApiError } from '~/lib/apiClient'
 import { getErrorMessage } from '~/lib/formatApiError'
 import { getLessonDateKey, toApiNumber } from '~/lib/lessonDateUtils'
 import {
@@ -12,7 +13,6 @@ import {
 import { DEFAULT_LESSON_TYPE, isPairLessonType, normalizeLessonType } from '~/pages/SchedulesPage/config/lessonTypes'
 import { lessonsService } from '~/services/lessonsService'
 import { schedulesService } from '~/services/schedulesService'
-import { teachersService } from '~/services/teachersService'
 import type { LessonDto, LessonType } from '~/types/api/lesson'
 import type { ScheduleDto } from '~/types/api/schedule'
 import type { LessonCellContext } from '~/types/api/lesson'
@@ -194,20 +194,37 @@ export function useLessonCellEdit({
   }, [open, context, cellLessons])
 
   useEffect(() => {
-    if (!open) return
+    if (!open || !schedule?.id) return
 
     const loadTeachers = async () => {
       setIsLoadingTeachers(true)
       try {
-        const data = await teachersService.getList({ page: 1, pageRecords: 200 })
+        const cellYear = context?.date ? parseIsoDate(context.date)?.getFullYear() : undefined
+        const teachers = await schedulesService.getScheduleTeachers(schedule.id, cellYear)
+        const optionsMap = new Map<string, string>()
+        for (const teacher of teachers) {
+          optionsMap.set(String(teacher.id), teacher.displayName)
+        }
+        for (const lesson of lessons) {
+          if (lesson.teacher?.id && lesson.teacher?.displayName) {
+            const key = String(lesson.teacher.id)
+            if (!optionsMap.has(key)) {
+              optionsMap.set(key, lesson.teacher.displayName)
+            }
+          }
+        }
         setTeacherOptions(
-          data.items.map((teacher) => ({
-            value: String(teacher.id),
-            label: teacher.displayName,
+          Array.from(optionsMap.entries()).map(([value, label]) => ({
+            value,
+            label,
           })),
         )
       } catch (err) {
-        toast.error(getErrorMessage(err, 'Не вдалося завантажити викладачів'))
+        if (err instanceof ApiError && err.status === 404) {
+          toast.error('Розклад не знайдено')
+        } else {
+          toast.error(getErrorMessage(err, 'Не вдалося завантажити викладачів'))
+        }
         setTeacherOptions([])
       } finally {
         setIsLoadingTeachers(false)
@@ -215,7 +232,7 @@ export function useLessonCellEdit({
     }
 
     void loadTeachers()
-  }, [open, toast])
+  }, [open, schedule?.id, context?.date, lessons, toast])
 
   const addEntry = useCallback(() => {
     setValidationError(null)
